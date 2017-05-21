@@ -9,7 +9,7 @@ function cluster(){
 	echo "daemonize yes 	
 pidfile "$redis_install_path"/redis/cluster/"$port"/redis-"$port".pid 
 port "$port"
-bind 120.0.0.1
+bind 127.0.0.1
 timeout 5
 databases 16
 maxclients 1000
@@ -75,7 +75,7 @@ if [ ! -d $redis_install_path/redis ]; then
 	echo "daemonize yes 	
 pidfile "$redis_install_path"/redis/redis.pid 
 port 6379
-bind 120.0.0.1
+bind 127.0.0.1
 timeout 5
 databases 16
 maxclients 1000
