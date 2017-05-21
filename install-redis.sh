@@ -1,5 +1,5 @@
 #linux redis自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/install-redis.sh && sh install-redis.sh 3.2.9 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-redis.sh && sh install-redis.sh 3.2.9 /usr/local
 
 function cluster(){ 
 	redis_install_path=$1;
