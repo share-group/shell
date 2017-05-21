@@ -1,5 +1,5 @@
 #linux redis自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/install-redis.sh && sh install-redis.sh 3.2.6 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/install-redis.sh && sh install-redis.sh 3.2.9 /usr/local
 
 function cluster(){ 
 	redis_install_path=$1;
@@ -9,7 +9,7 @@ function cluster(){
 	echo "daemonize yes 	
 pidfile "$redis_install_path"/redis/cluster/"$port"/redis-"$port".pid 
 port "$port"
-bind 0.0.0.0
+bind 120.0.0.1
 timeout 5
 databases 16
 maxclients 1000
@@ -46,7 +46,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #安装jemalloc
-jemalloc='jemalloc-4.4.0'
+jemalloc='jemalloc-4.5.0'
 if [ ! -d $install_path/$jemalloc ]; then
 	echo 'installing '$jemalloc' ...'
 	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
@@ -75,7 +75,7 @@ if [ ! -d $redis_install_path/redis ]; then
 	echo "daemonize yes 	
 pidfile "$redis_install_path"/redis/redis.pid 
 port 6379
-bind 0.0.0.0
+bind 120.0.0.1
 timeout 5
 databases 16
 maxclients 1000
