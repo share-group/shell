@@ -39,7 +39,7 @@ ln -s $nodejs_install_path/nodejs/lib/node_modules/npm/bin/npm-cli.js /usr/bin/n
 
 #更新npm版本
 npm config set registry https://registry.npm.taobao.org/
-npm install npm yarn -g
+npm install npm yarn node-gyp -g
 echo 'node version: '$(node -v)
 echo 'npm version: '$(npm -v)
 echo 'yarn version: '$(yarn -v)
