@@ -1,5 +1,5 @@
 #linux jenkins
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-jenkins.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/install-jenkins.sh && sh install-jenkins.sh /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-jenkins.sh && wget --no-cache https://raw.githubusercontent.com/share-group/master/shell/install-jenkins.sh && sh install-jenkins.sh /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)

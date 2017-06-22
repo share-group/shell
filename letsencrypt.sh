@@ -1,7 +1,7 @@
 # 使用Let's Encrypt生成https证书
 # 参考文章：http://www.tuicool.com/articles/yyEvmau
 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf letsencrypt.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/letsencrypt.sh && chmod 777 letsencrypt.sh && sh letsencrypt.sh
+#运行例子：mkdir -p /shell && cd /shell && rm -rf letsencrypt.sh && wget --no-cache https://raw.githubusercontent.com/share-group/master/shell/letsencrypt.sh && chmod 777 letsencrypt.sh && sh letsencrypt.sh
 
 # 每个域名，每周只能签20次
 
