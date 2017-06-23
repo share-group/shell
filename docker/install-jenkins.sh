@@ -1,5 +1,5 @@
 #linux jenkins自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-jenkins.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/docker/install-jenkins.sh && sh install-jenkins.sh 2.32.3 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-jenkins.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-jenkins.sh && sh install-jenkins.sh 2.32.3 /usr/local
 
 #处理外部参数
 jenkins_version=$1

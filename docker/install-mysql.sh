@@ -1,5 +1,5 @@
 #linux mysql自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/docker/install-mysql.sh && sh install-mysql.sh 5.7.17 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-mysql.sh && sh install-mysql.sh 5.7.17 /usr/local
 
 #处理外部参数
 mysql_version=$1
