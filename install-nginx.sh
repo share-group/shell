@@ -117,11 +117,13 @@ echo 'create nginx.conf...'
 ulimit='65535' #单个进程最大打开文件数
 worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
 echo "user root root;
+worker_cpu_affinity auto;
 worker_processes "$worker_processes";
 worker_rlimit_nofile "$ulimit";
 
 events {
 	use epoll;
+	accept_mutex off;
 	worker_connections "$ulimit";
 }
 
