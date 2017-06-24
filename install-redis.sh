@@ -10,7 +10,7 @@ function cluster(){
 pidfile "$redis_install_path"/redis/cluster/"$port"/redis-"$port".pid 
 port "$port"
 bind 0.0.0.0
-timeout 5
+timeout 0
 databases 16
 maxclients 1000
 dir "$redis_install_path"/redis/cluster/"$port"/
