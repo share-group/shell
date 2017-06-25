@@ -14,6 +14,8 @@ timeout 0
 databases 16
 maxclients 1000
 dir "$redis_install_path"/redis/cluster/"$port"/
+#loglevel debug
+#logfile "$redis_install_path"/redis/redis.log
 syslog-enabled no
 slowlog-log-slower-than -1
 appendonly no
@@ -80,6 +82,8 @@ timeout 5
 databases 16
 maxclients 1000
 dir "$redis_install_path"/redis/
+#loglevel debug
+#logfile "$redis_install_path"/redis/redis.log
 syslog-enabled no
 slowlog-log-slower-than -1
 appendonly no
