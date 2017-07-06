@@ -1,5 +1,5 @@
 #linux nginx自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-cache https://raw.githubusercontent.com/ruanzhijun/share/master/shell/install-nginx.sh && sh install-nginx.sh 1.12.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.12.0 /usr/local
 ntpdate ntp.api.bz
  
 #定义本程序的当前目录
