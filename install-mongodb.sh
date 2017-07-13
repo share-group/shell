@@ -28,10 +28,10 @@ wget -O $base_path/mongodb-$mongodb_version.tgz http://install.ruanzhijun.cn/mon
 tar zxvf $base_path/mongodb-$mongodb_version.tgz -C $mongodb_install_path || exit
 mv $mongodb_install_path/mongodb-linux-x86_64-$mongodb_version $mongodb_install_path/mongodb
 mkdir -p $mongodb_install_path/mongodb/data
-$mongodb_install_path/mongodb/bin/mongod --port 27017 --dbpath $mongodb_install_path/mongodb/data --logpath $mongodb_install_path/mongodb/log.log --logappend &
+$mongodb_install_path/mongodb/bin/mongod --port 27017 --dbpath $mongodb_install_path/mongodb/data --logpath --fork $mongodb_install_path/mongodb/log.log --logappend &
 echo '' >> /etc/rc.d/rc.local
 
 echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.d/rc.local
-echo $mongodb_install_path'/mongodb/bin/mongod --port 27017 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
+echo $mongodb_install_path'/mongodb/bin/mongod --port 27017 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
 source /etc/rc.d/rc.local
 
