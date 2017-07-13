@@ -60,7 +60,7 @@ if [ ! -d $install_path/$jemalloc ]; then
 	mv $install_path/$jemalloc $install_path/jemalloc 
 fi 
 
-#安装redis
+#安装redis 
 if [ ! -d $redis_install_path/redis ]; then
 	if [ ! -f $base_path/redis-$redis_version.tar.gz ]; then
 		echo 'redis-'$redis_version'.tar.gz is not exists, system will going to download it...'
@@ -78,7 +78,7 @@ if [ ! -d $redis_install_path/redis ]; then
 pidfile "$redis_install_path"/redis/redis.pid 
 port 6379
 bind 0.0.0.0
-timeout 5
+timeout 0
 databases 16
 maxclients 1000
 dir "$redis_install_path"/redis/

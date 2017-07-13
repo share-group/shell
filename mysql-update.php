@@ -9,7 +9,7 @@ define('SOURCE_PASS', trim($argv[3]));
 define('SOURCE_DB', trim($argv[4]));
 
 //目标数据库
-define('TARGET_HOST', trim($argv[5]));
+define('TARGET_HOST', trim($argv[5])); 
 define('TARGET_USER', trim($argv[6]));
 define('TARGET_PASS', trim($argv[7]));
 define('TARGET_DB', trim($argv[8]));
