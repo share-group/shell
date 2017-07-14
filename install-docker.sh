@@ -1,5 +1,5 @@
 #linux docker
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh 17.03.0-ce /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh 17.03.2-ce /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
