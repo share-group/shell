@@ -9,7 +9,7 @@ docker_version=$1
 docker_install_path=$2 
 if [ ! $docker_version ] || [ ! $docker_install_path ]; then
 	echo 'error command!!! you must input docker version and install path...'
-	echo 'for example: sh install-docker.sh 17.03.0-ce /usr/local'
+	echo 'for example: sh install-docker.sh 17.03.2-ce /usr/local'
 	exit
 fi
 
