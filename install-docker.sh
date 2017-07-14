@@ -19,10 +19,6 @@ install_path='/install'
 rm -rf $install_path
 mkdir -p $install_path
 
-#关闭selinux
-#setenforce 0
-#sed -i '/^SELINUX=/c\SELINUX=disabled' /etc/selinux/config || exit
-
 #旧版本的docker
 rm -rf /var/lib/docker
 rm -rf $docker_install_path/docker
