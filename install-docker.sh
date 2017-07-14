@@ -36,12 +36,12 @@ rm -rf /usr/bin/docker-runc
 rm -rf /usr/bin/docker-init
 
 #下载docker
-if [ ! -f $base_path/docker-$docker_version.tgz ]; then
-	echo 'docker-'$docker_version'.tgz is not exists, system will going to download it...'
-	wget -O $base_path/docker-$docker_version.tgz http://install.ruanzhijun.cn/docker-$docker_version.tgz || exit
-	echo 'download docker-'$docker_version'.tgz finished...'
+if [ ! -f $base_path/docker-$docker_version.tar.gz ]; then
+	echo 'docker-'$docker_version'.tar.gz is not exists, system will going to download it...'
+	wget -O $base_path/docker-$docker_version.tar.gz http://install.ruanzhijun.cn/docker-$docker_version.tar.gz || exit
+	echo 'download docker-'$docker_version'.tar.gz finished...'
 fi
-tar xvf $base_path/docker-$docker_version.tgz -C $docker_install_path || exit
+tar zxvf $base_path/docker-$docker_version.tar.gz -C $docker_install_path || exit
 cd $docker_install_path/docker && chmod 777 *
 ln -s $docker_install_path/docker/docker /usr/bin/docker && chmod 777 /usr/bin/docker
 ln -s $docker_install_path/docker/dockerd /usr/bin/dockerd && chmod 777 /usr/bin/dockerd
