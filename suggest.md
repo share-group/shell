@@ -39,6 +39,8 @@ klg-xxxx
 |   └──production.js
 |   └──dev.js
 |   └──test.js
+|--src
+|   └──xxx.ts
 |--production.js
 |--dev.js
 |--test.js
