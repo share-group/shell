@@ -30,11 +30,11 @@ klg-xxxx
 |--app
 |--bin
 |   └──cli
-|       └──xxx.js 
+|   |   └──xxx.js 
 |   └──pm2 
-|		└──production.json
-|		└──dev.json
-|		└──test.json
+|   |   └──production.json
+|   |   └──dev.json
+|   |   └──test.json
 |--config
 |	└──production.js
 |	└──dev.js
