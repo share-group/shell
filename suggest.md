@@ -36,9 +36,9 @@ klg-xxxx
 |   |   └──dev.json
 |   |   └──test.json
 |--config
-|	└──production.js
-|	└──dev.js
-|	└──test.js
+|   └──production.js
+|   └──dev.js
+|   └──test.js
 |--production.js
 |--dev.js
 |--test.js
