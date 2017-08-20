@@ -44,7 +44,16 @@ klg-xxxx
 |--production.js
 |--dev.js
 |--test.js
+|--package.json
 
 说明：
-a) 
+a) 所有项目，包括nodejs和ts项目，都适用这样的结构，ts项目所有源文件写在src里面，编译后文件放到app里面；nodejs项目直接在app文件编写
+b) 根目录下的production.js、dev.js、test.js均为项目启动文件，文件名即为环境名。如node production.js则以生产模式启动项目；node dev.js则以开发模式启动项目...不设置启动参数，所有该环境需要的配置，在config文件夹下对应的文件配置。
+c) 项目中所有的依赖包均按照package.json的定义来安装，不单独为某个项目做特例安装全局
+d) 用yarn代替npm
+e) package.json必需实现以下几个npm命令：build，prod。如果是nodejs项目则build命令可以置为空，但一定要定义。
+      └──为什么这么做呢？
+	         e-1:为看让运维降低部署的学习成本，项目的技术栈对于运维来说是透明的，运维不需要关心项目用什么技术实现，每次发布只需要git pull、yarn、yarn build、yarn prod，就可以成功发布项目
+			 e-2:解释一下为什么要用yarn。因为运维不再关心每次发布是否需要更新npm依赖了，所以每次发布，不需知道package.json文件是否有改动，只要用yarn安装一下即可。当package.json没有变化的情况下，yarn比npm i快10倍以上(yarn最多需要1秒)
+
 ```
