@@ -55,5 +55,12 @@ e) package.json必需实现以下几个npm命令：build，prod。如果是nodej
       └──为什么这么做呢？
 	         e-1:为看让运维降低部署的学习成本，项目的技术栈对于运维来说是透明的，运维不需要关心项目用什么技术实现，每次发布只需要git pull、yarn、yarn build、yarn prod，就可以成功发布项目
 		 e-2:解释一下为什么要用yarn。因为运维不再关心每次发布是否需要更新npm依赖了，所以每次发布，不需知道package.json文件是否有改动，只要用yarn安装一下即可。当package.json没有变化的情况下，yarn比npm i快10倍以上(yarn最多需要1秒)
+f) 开发在发布之前，找运维拿到各个环境的配置，写入相应的配置文件中
+g) pm2的配置文件去掉所有启动参数(即拿掉env这个key)
 
+综上：改进之后，不管项目使用什么技术栈，运维部署项目永远只需要4步：
+1. git pull
+2. yarn
+3. yarn build
+4. pm2 start bin/pm2/production.json
 ```
