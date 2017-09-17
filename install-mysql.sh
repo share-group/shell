@@ -22,7 +22,7 @@ mkdir -p $install_path
 yum -y install libtool sed gcc gcc-c++ make net-snmp net-snmp-devel net-snmp-utils libc6-dev python-devel rsync perl bc libxslt-dev lrzsz ncurses-devel perl bzip2 unzip vim iptables-services httpd-tools socat
 
 #安装cmake
-cmake='cmake-3.8.0'
+cmake='cmake-3.9.2'
 if [ ! -d $mysql_install_path/cmake ]; then
 	echo 'installing '$cmake'...'
 	if [ ! -f $base_path/$cmake.tar.gz ]; then
@@ -39,7 +39,7 @@ if [ ! -d $mysql_install_path/cmake ]; then
 fi
 
 #安装jemalloc
-jemalloc='jemalloc-5.0.0'
+jemalloc='jemalloc-5.0.1'
 if [ ! -d $mysql_install_path/jemalloc ]; then
 	echo 'installing '$jemalloc' ...'
 	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
