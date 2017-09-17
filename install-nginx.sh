@@ -251,7 +251,7 @@ server {
 	ssl_stapling on;
 	ssl_stapling_verify on;
 	resolver 8.8.4.4 8.8.8.8 valid=300s;
-    resolver_timeout 10s;
+	resolver_timeout 10s;
 
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
