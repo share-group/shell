@@ -1,5 +1,5 @@
 #linux nginx自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.12.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.13.5 /usr/local
 ntpdate ntp.api.bz
  
 #定义本程序的当前目录
@@ -10,11 +10,11 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.12.0 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.13.5 /usr/local'
 	exit
 fi
 
-yum -y install gcc libc6-dev gcc-c++ pcre-devel perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed geoip-database python-devel gd-devel libgeoip-dev make libxslt-dev rsync lrzsz libxml2 libxml2-dev libxslt-dev libgd2-xpm libgd2-xpm-dev libpcre3 libpcre3-dev httpd-tools ruby ruby-devel rubygems rpm-build curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build httpd-tools bc socat
+yum -y install gcc libc6-dev gcc-c++ make rsync lrzsz bzip2 unzip vim
 
 #建立临时安装目录
 echo 'preparing working path...'
