@@ -55,7 +55,7 @@ if [ ! -d $mysql_install_path/jemalloc ]; then
 fi
 
 #下载boost包
-boost='boost_1_65_1'
+boost='boost_1_59_0'
 if [ ! -d $install_path/$boost ]; then
 	echo 'installing '$boost' ...'
 	if [ ! -f $base_path/$boost.tar.gz ]; then
