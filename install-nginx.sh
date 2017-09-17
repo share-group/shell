@@ -265,7 +265,9 @@ $(source /etc/profile)
 #复制demo https证书
 mkdir -p /letsencrypt/letsencrypt/
 cd /letsencrypt/letsencrypt/
-wget --no-cache 
+wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.crt
+wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.key
+wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.pem
 
 #启动nginx
 yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/
