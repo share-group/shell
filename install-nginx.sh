@@ -246,6 +246,7 @@ server {
 	ssl_dhparam /letsencrypt/letsencrypt/demo.pem;
 	ssl_prefer_server_ciphers on;
 	ssl_session_cache shared:SSL:10m;
+	ssl_ecdh_curve secp384r1;
 	
 	ssl_stapling on;
 	ssl_stapling_verify on;
