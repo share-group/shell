@@ -1,4 +1,4 @@
-#linux gradle
+#linux java
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.githubusercontent.com/share-group/master/shell/install-java.sh && sh install-java.sh /usr/local
  
 #定义本程序的当前目录
@@ -20,7 +20,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载java
-jdk='jdk-8u131-linux-x64'
+jdk='jdk-9_linux-x64_bin'
 echo 'installing '$jdk' ...'
 if [ ! -f $base_path/$jdk.tar.gz ]; then
 	echo $jdk'.tar.gz is not exists, system will going to download it...'
@@ -31,7 +31,7 @@ tar zxvf $jdk.tar.gz -C $java_install_path
 
 echo "" >> /etc/profile
 echo "# set Java environment" >> /etc/profile
-echo "JAVA_HOME="$java_install_path"/jdk1.8.0_131" >> /etc/profile
+echo "JAVA_HOME="$java_install_path"/jdk-9" >> /etc/profile
 echo "PATH=\$JAVA_HOME/bin:\$PATH" >> /etc/profile
 echo "CLASSPATH=.:\$JAVA_HOME/lib/dt.jar:\$JAVA_HOME/lib/tools.jar" >> /etc/profile
 echo "export JAVA_HOME" >> /etc/profile
