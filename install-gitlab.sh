@@ -23,7 +23,7 @@ firewall-cmd --permanent --add-service=http
 systemctl reload firewalld
 
 cd $install_path
-gitlab='gitlab-ce-9.5.4-ce.0.el7.x86_64.rpm'
+gitlab='gitlab-ce-10.1.2-ce.0.el7.x86_64.rpm'
 if [ ! -f $install_path/$gitlab ]; then
 	wget --no-cache http://install.ruanzhijun.cn/$gitlab || exit
 fi
