@@ -1,12 +1,12 @@
 #linux mysql自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-mysql.sh && sh install-mysql.sh 5.7.18 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-mysql.sh && sh install-mysql.sh 8.0.3 /usr/local
 
 #处理外部参数
 mysql_version=$1
 mysql_install_path=$2
 if [ ! $mysql_version ] || [ ! $mysql_install_path ]; then
 	echo 'error command!!! you must input mysql install path...'
-	echo 'for example: sh install-mysql.sh 5.7.17 /usr/local'
+	echo 'for example: sh install-mysql.sh 8.0.3 /usr/local'
 	exit
 fi
  
@@ -92,7 +92,7 @@ write_buffer = 200K
 interactive-timeout" > /etc/my.cnf || exit
 
 #用docker安装
-docker pull hub.c.163.com/library/mysql:$mysql_version
+docker pull daocloud.io/library/mysql:$mysql_version
 
 #启动mysql
 docker run --name mysql -p 3306:3306 -v /etc/my.cnf:/etc/mysql/my.cnf -v $mysql_data_path:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d hub.c.163.com/library/mysql:$mysql_version

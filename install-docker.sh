@@ -20,9 +20,11 @@ docker info
 #安装基础镜像alpine
 docker pull alpine
 
-#安装私有仓库
+#加速器
+curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://30c125e3.m.daocloud.io
 
-#安装容器管理rancher
+#重启docker
+systemctl restart docker
 
 #开机自启动
 echo '' >> /etc/rc.local
