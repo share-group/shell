@@ -140,10 +140,17 @@ http {
 	client_header_buffer_size 32k;
 	client_max_body_size 200m;
 	
+	#强制忽略缓存
 	add_header Cache-Control no-store,no-cache,must-revalidate,max-age=0;
 	
-	proxy_set_header  X-Real-IP \$remote_addr;
-	proxy_set_header  X-Forwarded-For \$proxy_add_x_forwarded_for;
+	proxy_set_header X-Real-IP \$remote_addr;
+	proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+	
+	#允许跨域
+	add_header Access-Control-Allow-Origin '*';
+	add_header Access-Control-Allow-Credentials 'true';
+	add_header Access-Control-Allow-Methods 'GET,POST,OPTIONS,PUT,DELETE,PATCH';
+	add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
 	
 	fastcgi_connect_timeout 600;
 	fastcgi_send_timeout 600;
@@ -193,6 +200,17 @@ server {
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
 		include fastcgi.conf;
 	}
+	
+	#允许所有method跨域
+	#location ~ .*$ {
+	#	if ($request_method = "OPTIONS") {
+	#		add_header Access-Control-Allow-Origin "*";
+	#		add_header Access-Control-Allow-Credentials "true";
+	#		add_header Access-Control-Allow-Methods "GET,POST,OPTIONS,PUT,DELETE,PATCH";
+	#		add_header Access-Control-Allow-Headers "DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type";
+	#		return 204;
+	#	}
+	#}
 		
 	#缓存网站素材
 	#location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|js|css)$ {
