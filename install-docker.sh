@@ -27,6 +27,7 @@ systemctl restart docker
 docker pull alpine
 
 #开机自启动
+chkconfig --level 35 iptables off
 echo '' >> /etc/rc.local
 echo 'chkconfig --level 35 iptables off' >> /etc/rc.local
 echo 'systemctl start docker' >> /etc/rc.local
