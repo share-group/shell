@@ -17,14 +17,14 @@ systemctl restart docker
 docker -v
 docker info
 
-#安装基础镜像alpine
-docker pull alpine
-
 #加速器
 curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://30c125e3.m.daocloud.io
 
 #重启docker
 systemctl restart docker
+
+#安装基础镜像alpine
+docker pull alpine
 
 #开机自启动
 echo '' >> /etc/rc.local
