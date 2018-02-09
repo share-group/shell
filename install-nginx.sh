@@ -80,11 +80,11 @@ if [ ! -d $nginx_install_path/openssl ]; then
 	ldconfig -v
 	yes|cp $nginx_install_path/openssl/bin/* /usr/bin/
 	echo $openssl' install finished...'
-	
-	#再解压一次给nginx编译用
-	rm -rf $install_path/$openssl
-	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 fi
+
+#再解压一次给nginx编译用
+rm -rf $install_path/$openssl
+tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 
 #安装libatomic
 libatomic='libatomic_ops-1.1'
