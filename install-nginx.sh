@@ -23,7 +23,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载zlib
-zlib='zlib-1.2.10'
+zlib='zlib-1.2.11'
 if [ ! -d $install_path/$zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then

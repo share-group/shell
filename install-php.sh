@@ -61,7 +61,7 @@ if [ ! -d $php_install_path/libiconv ]; then
 fi
  
 # 下载zlib
-zlib='zlib-1.2.10'
+zlib='zlib-1.2.11'
 if [ ! -d $php_install_path/zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
