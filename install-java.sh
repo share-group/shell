@@ -1,5 +1,5 @@
 #linux java
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.githubusercontent.com/share-group/master/shell/install-java.sh && sh install-java.sh /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-java.sh && sh install-java.sh /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -20,7 +20,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载java
-jdk='jdk-9_linux-x64_bin'
+jdk='jdk-8u131-linux-x64'
 echo 'installing '$jdk' ...'
 if [ ! -f $base_path/$jdk.tar.gz ]; then
 	echo $jdk'.tar.gz is not exists, system will going to download it...'
