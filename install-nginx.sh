@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	exit
 fi
 
-yum -y install gcc libc6-dev gcc-c++ make rsync lrzsz bzip2 unzip vim
+yum -y install gcc libc6-dev gcc-c++ make rsync lrzsz bzip2 unzip vim zlib zlib-devel
 
 #建立临时安装目录
 echo 'preparing working path...'
