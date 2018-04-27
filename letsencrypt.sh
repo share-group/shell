@@ -1,8 +1,9 @@
 #自签通配符证书
+mkdir -p /letsencrypt
 cd /letsencrypt
 
 rm -rf /root/.acme.sh
-mkdir /root/.acme.sh
+mkdir -p /root/.acme.sh
 
 #下载最新的acme.sh脚本
 rm -rf /letsencrypt/acme.sh
