@@ -1,12 +1,12 @@
 #linux mysql自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-mysql.sh && sh install-mysql.sh 8.0.3 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-mysql.sh && sh install-mysql.sh 8.0.11 /usr/local
 
 #处理外部参数
 mysql_version=$1
 mysql_install_path=$2
 if [ ! $mysql_version ] || [ ! $mysql_install_path ]; then
 	echo 'error command!!! you must input mysql install path...'
-	echo 'for example: sh install-mysql.sh 8.0.3 /usr/local'
+	echo 'for example: sh install-mysql.sh 8.0.11 /usr/local'
 	exit
 fi
  
