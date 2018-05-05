@@ -92,10 +92,10 @@ write_buffer = 200K
 interactive-timeout" > /etc/my.cnf || exit
 
 #用docker安装
-docker pull daocloud.io/library/mysql:$mysql_version
+docker pull mysql:$mysql_version
 
 #启动mysql
-docker run --name mysql -p 3306:3306 -v /etc/my.cnf:/etc/mysql/my.cnf -v $mysql_data_path:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d hub.c.163.com/library/mysql:$mysql_version
+docker run --name mysql -p 3306:3306 -v /etc/my.cnf:/etc/mysql/my.cnf -v $mysql_data_path:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=root -d mysql:$mysql_version
 
 echo '' >> /etc/rc.d/rc.local
 echo 'docker mysql start' >> /etc/rc.local
