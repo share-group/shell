@@ -260,7 +260,7 @@ server {
 	ssl_certificate /letsencrypt/letsencrypt/demo.crt;
 	ssl_certificate_key /letsencrypt/letsencrypt/demo.key;
 	ssl_ciphers \"TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA\";
-	ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+	ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
 	ssl_dhparam /letsencrypt/letsencrypt/demo.pem;
 	ssl_prefer_server_ciphers on;
 	ssl_session_cache shared:SSL:10m;
@@ -297,17 +297,3 @@ echo '' >> /etc/rc.d/rc.local
 echo 'systemctl stop firewalld' >> /etc/rc.d/rc.local
 echo 'nginx' >> /etc/rc.d/rc.local
 $(source /etc/rc.d/rc.local)
-
-##################### 自己给自己颁发证书的方法 ######################################
-# 生成一个RSA密钥 
-# $ openssl genrsa -des3 -out 33iq.key 1024
- 
-# 拷贝一个不需要输入密码的密钥文件
-# $ openssl rsa -in 33iq.key -out 33iq_nopass.key
- 
-# 生成一个证书请求
-# $ openssl req -new -key 33iq.key -out 33iq.csr
- 
-# 自己签发证书
-# $ openssl x509 -req -days 365 -in 33iq.csr -signkey 33iq.key -out 33iq.crt
-#第3个命令是生成证书请求，会提示输入省份、城市、域名信息等，重要的是，email一定要是你的域名后缀的。这样就有一个 csr 文件了，提交给 ssl 提供商的时候就是这个 csr 文件。当然我这里并没有向证书提供商申请，而是在第4步自己签发了证书。

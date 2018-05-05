@@ -23,6 +23,9 @@ curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://30c125e3
 #重启docker
 systemctl restart docker
 
+#安装docker-compose
+pip install docker-compose
+
 #安装基础镜像alpine
 docker pull alpine
 
