@@ -28,6 +28,7 @@ pip uninstall urllib3 -y
 pip uninstall chardet -y
 pip install requests
 pip install docker-compose
+pip install --upgrade pip
 
 #安装基础镜像alpine
 docker pull alpine
