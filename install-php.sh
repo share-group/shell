@@ -48,7 +48,7 @@ fi
 
 #安装libiconv
 if [ ! -d $php_install_path/libiconv ]; then
-	libiconv='libiconv-1.14'
+	libiconv='libiconv-1.15'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
 		wget -O $base_path/$libiconv.tar.gz http://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
@@ -130,7 +130,7 @@ if [ ! -d $php_install_path/openssl ]; then
 fi
 
 # 安装pcre
-pcre='pcre-8.41'
+pcre='pcre-8.42'
 if [ ! -d $php_install_path/pcre ]; then
 	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then

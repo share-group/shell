@@ -1,5 +1,5 @@
 #linux nginx自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.12.2 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.14.0 /usr/local
 ntpdate ntp.api.bz
  
 #定义本程序的当前目录
@@ -10,7 +10,7 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.12.2 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.14.0 /usr/local'
 	exit
 fi
 
@@ -35,7 +35,7 @@ if [ ! -d $install_path/$zlib ]; then
 fi
 
 #下载pcre
-pcre='pcre-8.41'
+pcre='pcre-8.42'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...' 
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -48,7 +48,7 @@ fi
 
 #安装libiconv
 if [ ! -d $nginx_install_path/libiconv ]; then
-	libiconv='libiconv-1.14'
+	libiconv='libiconv-1.15'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
 		wget -O $base_path/$libiconv.tar.gz http://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
