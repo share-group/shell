@@ -1,5 +1,5 @@
 #linux nodejs自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 10.4.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 10.7.0 /usr/local
 ntpdate ntp.api.bz
  
 #定义本程序的当前目录
@@ -10,7 +10,7 @@ nodejs_version=$1
 nodejs_install_path=$2
 if [ ! $nodejs_version ] || [ ! $nodejs_install_path ]; then
 	echo 'error command!!! you must input nodejs version and install path...'
-	echo 'for example: sh install-nodejs.sh 10.4.0 /usr/local'
+	echo 'for example: sh install-nodejs.sh 10.7.0 /usr/local'
 	exit
 fi
 
