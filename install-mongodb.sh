@@ -32,6 +32,6 @@ $mongodb_install_path/mongodb/bin/mongod --port 27017 --dbpath $mongodb_install_
 echo '' >> /etc/rc.d/rc.local
 
 echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.d/rc.local
-echo $mongodb_install_path'/mongodb/bin/mongod --port 27017 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
+echo $mongodb_install_path'/mongodb/bin/mongod --port 27017 --bind_ip 0.0.0.0 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
 source /etc/rc.d/rc.local
 
