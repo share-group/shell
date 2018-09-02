@@ -26,7 +26,7 @@ rm -rf $mongodb_install_path/mongodb
 
 wget -O $base_path/mongodb-$mongodb_version.tgz http://install.ruanzhijun.cn/mongodb-linux-x86_64-$mongodb_version.tgz || exit
 tar zxvf $base_path/mongodb-$mongodb_version.tgz -C $mongodb_install_path || exit
-mv $mongodb_install_path/mongodb-linux-x86_64-$mongodb_version $mongodb_install_path/mongodb
+mv $mongodb_install_path/mongodb-linux-x86_64-enterprise-rhel70-$mongodb_version $mongodb_install_path/mongodb
 mkdir -p $mongodb_install_path/mongodb/data
 $mongodb_install_path/mongodb/bin/mongod --port 27017 --dbpath $mongodb_install_path/mongodb/data --logpath --fork $mongodb_install_path/mongodb/log.log --logappend &
 echo '' >> /etc/rc.d/rc.local
