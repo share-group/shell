@@ -35,3 +35,12 @@ echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.d/rc.l
 echo $mongodb_install_path'/mongodb/bin/mongod --port 27017 --bind_ip 0.0.0.0 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
 source /etc/rc.d/rc.local
 
+#创建超级管理员
+#db.createUser({user: "root",pwd: "xxxxxxxxxxxxx",roles: [{role:"dbAdminAnyDatabase",db:"admin"},{ role: "userAdminAnyDatabase",db:"admin"},{role:"readAnyDatabase",db:"admin"},{role:"readWriteAnyDatabase",db:"admin"}]})
+
+#单个数据库读写
+#db.createUser({user:"root",pwd: "xxxxxxxxxxxxxxxx",roles:[{role:"readWrite",db:"Kpoker"}]})
+
+#mongodb用户名密码登录
+#mongo -u root -p root --authenticationDatabase admin
+

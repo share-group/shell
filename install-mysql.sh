@@ -231,3 +231,5 @@ mysql -uroot -proot -e "select VERSION();" || exit
 #     出现下面的信息，证明主从同步成功
 #     Slave_IO_Running: Yes    //此状态必须YES     
 #     Slave_SQL_Running: Yes    //此状态必须YES
+
+# alter 修改密码方式：alter user user() identified by "123456";

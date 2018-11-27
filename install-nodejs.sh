@@ -38,7 +38,7 @@ yes|cp -rf $nodejs_install_path/nodejs/bin/node /usr/bin/
 ln -s $nodejs_install_path/nodejs/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
 
 #更新npm版本
-npm --registry https://registry.npm.taobao.org i -g npm npm-check yarn ava nyc mocha tslint eslint typescript
+npm --registry https://registry.npm.taobao.org i -g npm npm-check yarn ava nyc mocha tslint eslint typescript pm2
 echo 'node version: '$(node -v)
 echo 'npm version: '$(npm -v)
 echo 'yarn version: '$(yarn -v)
