@@ -232,6 +232,11 @@ server {
 	#		auth_basic "Authorized users only";
 	#		auth_basic_user_file /usr/local/tengine/conf/web/htpasswd;  #密码文件格式：gatherup.cc:/XJt5jAl/dKTI
 	#}
+	
+	#查看nginx状态
+	#location /status {
+	#	stub_status		on;
+	#}
 		
 	#nginx 伪静态写法(一定要写在最后)
 	#location ~ .*$ { 
