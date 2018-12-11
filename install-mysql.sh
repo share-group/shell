@@ -39,7 +39,7 @@ if [ ! -d $mysql_install_path/cmake ]; then
 fi
 
 #安装jemalloc
-jemalloc='jemalloc-5.0.1'
+jemalloc='jemalloc-5.1.0'
 if [ ! -d $mysql_install_path/jemalloc ]; then
 	echo 'installing '$jemalloc' ...'
 	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
