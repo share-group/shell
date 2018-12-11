@@ -48,7 +48,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #安装jemalloc
-jemalloc='jemalloc-5.0.1'
+jemalloc='jemalloc-5.1.0'
 if [ ! -d $install_path/$jemalloc ]; then
 	echo 'installing '$jemalloc' ...'
 	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
