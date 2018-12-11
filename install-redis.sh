@@ -33,7 +33,7 @@ ntpdate ntp.api.bz
 #处理外部参数
 redis_version=$1
 redis_install_path=$2
-if [ ! $redis_version ] || [ ! $redis_install_path ] ; then
+if [ ! $redis_version ] || [ ! $redis_install_path ]; then
 	echo 'error command!!! you must input redis version and install path...'
 	echo 'for example: sh install-redis.sh 5.0.2 /usr/local'
 	exit
