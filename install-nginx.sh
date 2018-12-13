@@ -140,18 +140,6 @@ http {
 	client_header_buffer_size 32k;
 	client_max_body_size 200m;
 	
-	#强制忽略缓存
-	add_header Cache-Control no-store,no-cache,must-revalidate,max-age=0;
-	
-	proxy_set_header X-Real-IP \$remote_addr;
-	proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-	
-	#允许跨域
-	add_header Access-Control-Allow-Origin '*';
-	add_header Access-Control-Allow-Credentials 'true';
-	add_header Access-Control-Allow-Methods 'GET,POST,OPTIONS,PUT,DELETE,PATCH';
-	add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
-	
 	fastcgi_connect_timeout 600;
 	fastcgi_send_timeout 600;
 	fastcgi_read_timeout 600;
@@ -275,7 +263,21 @@ server {
 	ssl_stapling_verify on;
 	resolver 8.8.4.4 8.8.8.8 valid=300s;
 	resolver_timeout 10s;
+	
+	#强制忽略缓存
+	add_header Cache-Control no-store,no-cache,must-revalidate,max-age=0;
+	
+	#记录客户端真实ip
+	proxy_set_header X-Real-IP \$remote_addr;
+	proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+	
+	#允许跨域
+	add_header Access-Control-Allow-Origin '*';
+	add_header Access-Control-Allow-Credentials 'true';
+	add_header Access-Control-Allow-Methods 'GET,POST,OPTIONS,PUT,DELETE,PATCH';
+	add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
 
+	#不允许用框架、强制用https
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
 	add_header Strict-Transport-Security 'max-age=315360000; includeSubDomains; preload;';
