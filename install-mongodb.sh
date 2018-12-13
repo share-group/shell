@@ -114,7 +114,8 @@ mongod --port 27017 --dbpath $mongodb_install_path/mongodb/data --logpath --fork
 echo '' >> /etc/rc.d/rc.local
 
 echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.d/rc.local
-echo 'mongod --port 27017 --bind_ip 0.0.0.0 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
+echo 'rm -rf '$mongodb_install_path'/mongodb/mongodb.pid' >> /etc/rc.d/rc.local
+echo 'mongod -f '$mongodb_install_path'/mongodb/mongodb.conf' >> /etc/rc.d/rc.local
 source /etc/rc.d/rc.local
 
 #创建超级管理员
