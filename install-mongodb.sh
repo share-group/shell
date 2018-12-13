@@ -30,9 +30,9 @@ mv $mongodb_install_path/mongodb-linux-x86_64-$mongodb_version $mongodb_install_
 rm -rf $mongodb_install_path/mongodb/data
 mkdir -p $mongodb_install_path/mongodb/data
 
-cd /usr/bin/ && ln -s $mongodb_install_path/mongodb/bin/mongo mongo
-cd /usr/bin/ && ln -s $mongodb_install_path/mongodb/bin/mongod mongod
-cd /usr/bin/ && ln -s $mongodb_install_path/mongodb/bin/mongodump mongodump
+cd /usr/bin/ && rm -rf /usr/bin/mongo && ln -s $mongodb_install_path/mongodb/bin/mongo mongo
+cd /usr/bin/ && rm -rf /usr/bin/mongod && ln -s $mongodb_install_path/mongodb/bin/mongod mongod
+cd /usr/bin/ && rm -rf /usr/bin/mongodump && ln -s $mongodb_install_path/mongodb/bin/mongodump mongodump
 chmod 777 /usr/bin/mongo
 chmod 777 /usr/bin/mongod
 chmod 777 /usr/bin/mongodump
