@@ -37,11 +37,11 @@ chmod 777 /usr/bin/mongo
 chmod 777 /usr/bin/mongod
 chmod 777 /usr/bin/mongodump
 
-$mongodb_install_path/mongodb/bin/mongod --port 27017 --dbpath $mongodb_install_path/mongodb/data --logpath --fork $mongodb_install_path/mongodb/log.log --logappend &
+mongod --port 27017 --dbpath $mongodb_install_path/mongodb/data --logpath --fork $mongodb_install_path/mongodb/log.log --logappend &
 echo '' >> /etc/rc.d/rc.local
 
 echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.d/rc.local
-echo $mongodb_install_path'/mongodb/bin/mongod --port 27017 --bind_ip 0.0.0.0 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
+echo 'mongod --port 27017 --bind_ip 0.0.0.0 --dbpath '$mongodb_install_path'/mongodb/data --logpath '$mongodb_install_path'/mongodb/log.log --logappend --fork --storageEngine wiredTiger &' >> /etc/rc.d/rc.local
 source /etc/rc.d/rc.local
 
 #创建超级管理员
