@@ -94,9 +94,6 @@ journal=true
 #刷写提交机制
 journalCommitInterval=100
 
-#是否开启http接口
-nohttpinterface=false
-
 #预分配方式
 noprealloc=false
 
