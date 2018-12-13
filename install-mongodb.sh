@@ -57,10 +57,6 @@ logpath="$mongodb_install_path"/mongodb/mongodb.log
 #pid文件路径
 pidfilepath="$mongodb_install_path"/mongodb/mongodb.pid
 
-#日志信息冗余
-verbose=false
-vvvv=false
-
 #是否追加日志
 logappend=true
 
