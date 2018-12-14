@@ -19,7 +19,7 @@ install_path='/install'
 rm -rf $install_path
 mkdir -p $install_path
 
-yum -y install curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build httpd-tools bc gcc libc6-dev gcc-c++ pcre-devel perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed geoip-database python-devel gd-devel libgeoip-dev make libxslt-dev rsync libxml2 libxml2-dev libxslt-dev libgd2-xpm libgd2-xpm-dev libpcre3 libpcre3-dev httpd-tools ruby ruby-devel rubygems rpm-build socat perl-CPAN
+yum -y install curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build httpd-tools bc gcc libc6-dev gcc-c++ pcre-devel perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed geoip-database python-devel gd-devel libgeoip-dev make libxslt-dev rsync libxml2 libxml2-dev libxslt-dev libgd2-xpm libgd2-xpm-dev libpcre3 libpcre3-dev httpd-tools ruby ruby-devel rubygems rpm-build socat perl-CPAN libtool sed gcc gcc-c++ make net-snmp net-snmp-devel net-snmp-utils libc6-dev python-devel rsync perl bc libxslt-dev lrzsz ncurses-devel perl bzip2 unzip vim iptables-services httpd-tools socat
 
 yum -y remove git
 
