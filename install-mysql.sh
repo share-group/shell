@@ -33,7 +33,7 @@ if [ ! -d $mysql_install_path/cmake ]; then
 	tar zxvf $base_path/$cmake.tar.gz -C $install_path || exit
 	cd $install_path/$cmake
 	./bootstrap --system-curl --prefix=$mysql_install_path/cmake && make && make install || exit
-	yes|cp $mysql_install_path/cmake/bin/* /usr/bin/
+	cd /usr/bin && ln -s mysql_install_path/cmake/bin/cmake cmake && chmod 777 cmake
 	echo 'export PATH='$mysql_install_path'/cmake/bin:$PATH' >> ~/.bash_profile
 	source ~/.bash_profile
 fi
@@ -55,7 +55,7 @@ if [ ! -d $mysql_install_path/jemalloc ]; then
 fi
 
 #下载boost包
-boost='boost_1_59_0'
+boost='boost_1_67_0'
 if [ ! -d $install_path/$boost ]; then
 	echo 'installing '$boost' ...'
 	if [ ! -f $base_path/$boost.tar.gz ]; then
