@@ -19,7 +19,7 @@ install_path='/install'
 rm -rf $install_path
 mkdir -p $install_path
 
-yum -y install curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build bc perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed python-devel gd-devel libxml2 libxml2-dev libpcre3 libpcre3-dev socat perl-CPAN libtool sed net-snmp net-snmp-devel net-snmp-utils ncurses-devel dos2unix texinfo policycoreutils openssh-server openssh-clients postfix
+yum -y install curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build bc perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed python-devel gd-devel libxml2 libxml2-dev libpcre3 libpcre3-dev socat perl-CPAN libtool sed net-snmp net-snmp-devel net-snmp-utils ncurses-devel dos2unix texinfo policycoreutils openssh-server openssh-clients postfix bison
 
 #安装cmake
 cmake='cmake-3.13.2'
@@ -36,22 +36,6 @@ if [ ! -d $mysql_install_path/cmake ]; then
 	cd /usr/bin && ln -s mysql_install_path/cmake/bin/cmake cmake && chmod 777 cmake
 	echo 'export PATH='$mysql_install_path'/cmake/bin:$PATH' >> ~/.bash_profile
 	source ~/.bash_profile
-fi
-
-#安装jemalloc
-jemalloc='jemalloc-5.1.0'
-if [ ! -d $mysql_install_path/jemalloc ]; then
-	echo 'installing '$jemalloc' ...'
-	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
-		echo $jemalloc'.tar.bz2 is not exists, system will going to download it...'
-		wget -O $base_path/$jemalloc.tar.bz2 http://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
-		echo 'download '$jemalloc' finished...'
-	fi
-	tar xvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
-	cd $install_path/$jemalloc
-	./configure && make && make install || exit
-	echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf
-	ldconfig
 fi
 
 #下载boost包
@@ -98,7 +82,7 @@ cd $install_path/$mysql
 #删除编译缓存
 rm -rf $install_path/$mysql/CMakeCache.txt 
 
-$mysql_install_path/cmake/bin/cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_path/mysql -DMYSQL_UNIX_ADDR=$mysql_data_path/mysql.sock -DSYSCONFDIR=/etc -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci -DCMAKE_EXE_LINKER_FLAGS="-ljemalloc" -DWITH_SAFEMALLOC=ON -DWITH_EXTRA_CHARSETS:STRING=utf8 -DWITH_BOOST=$install_path/$boost -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_DEBUG=0 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_DATADIR=$mysql_data_path -DMYSQL_USER=mysql || exit
+$mysql_install_path/cmake/bin/cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_path/mysql -DMYSQL_UNIX_ADDR=$mysql_data_path/mysql.sock -DSYSCONFDIR=/etc -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci -DWITH_SAFEMALLOC=ON -DWITH_EXTRA_CHARSETS:STRING=utf8mb4 -DWITH_BOOST=$install_path/$boost -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_DEBUG=0 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_DATADIR=$mysql_data_path -DMYSQL_USER=mysql || exit
 
 #查询cpu逻辑个数
 cpus=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7)
@@ -118,7 +102,6 @@ port = 3306
 socket = "$mysql_install_path"/mysql/data/mysql.sock
 basedir = "$mysql_install_path"/mysql
 datadir = "$mysql_data_path"
-skip-grant-tables
 skip-name-resolve
 skip-external-locking
 key_buffer_size = 100K
@@ -198,8 +181,8 @@ yes|cp -rf $mysql_install_path/mysql/bin/* /usr/bin/ || exit
 service mysqld start
 
 #修改root密码
-mysql -u root -e "truncate mysql.user;" || exit
-mysql -u root -e "INSERT INTO mysql.user (Host,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Reload_priv,Shutdown_priv,Process_priv,File_priv,Grant_priv,References_priv,Index_priv,Alter_priv,Show_db_priv,Super_priv,Create_tmp_table_priv,Lock_tables_priv,Execute_priv,Repl_slave_priv,Repl_client_priv,Create_view_priv,Show_view_priv,Create_routine_priv,Alter_routine_priv,Create_user_priv,Event_priv,Trigger_priv,Create_tablespace_priv,ssl_type,ssl_cipher,x509_issuer,x509_subject,max_questions,max_updates,max_connections,max_user_connections,plugin,authentication_string,password_expired,password_last_changed,password_lifetime,account_locked) VALUES ('%', 'root', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','','','','', 0, 0, 0, 0,'mysql_native_password', password('root'),'N', NULL, NULL,'N');" || exit
+mysql -u root -e "truncate `mysql`.`user`;" || exit
+mysql -u root -e "insert into `mysql`.`user` (`Host`,`User`,`Select_priv`,`Insert_priv`,`Update_priv`,`Delete_priv`,`Create_priv`,`Drop_priv`,`Reload_priv`,`Shutdown_priv`,`Process_priv`,`File_priv`,`Grant_priv`,`References_priv`,`Index_priv`,`Alter_priv`,`Show_db_priv`,`Super_priv`,`Create_tmp_table_priv`,`Lock_tables_priv`,`Execute_priv`,`Repl_slave_priv`,`Repl_client_priv`,`Create_view_priv`,`Show_view_priv`,`Create_routine_priv`,`Alter_routine_priv`,`Create_user_priv`,`Event_priv`,`Trigger_priv`,`Create_tablespace_priv`,`ssl_type`,`ssl_cipher`,`x509_issuer`,`x509_subject`,`max_questions`,`max_updates`,`max_connections`,`max_user_connections`,`plugin`,`authentication_string`,`password_expired`,`password_last_changed`,`password_lifetime`,`account_locked`,`Create_role_priv`,`Drop_role_priv`,`Password_reuse_history`,`Password_reuse_time`) VALUES ('%','root','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','','','','', 0, 0, 0, 0, 'mysql_native_password','*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B','N', NULL, NULL, 'N','Y','Y', NULL, NULL),('localhost','mysql.infoschema','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','','','','', 0, 0, 0, 0, 'mysql_native_password','*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B','N', NULL, NULL, 'N','Y','Y', NULL, NULL),('localhost','mysql.session','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','','','','', 0, 0, 0, 0, 'mysql_native_password','*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B','N', NULL, NULL, 'N','Y','Y', NULL, NULL),('localhost','mysql.sys','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','Y','','','','', 0, 0, 0, 0, 'mysql_native_password','*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B','N', NULL, NULL, 'N','Y','Y', NULL, NULL)" || exit
 
 sed -i 's/skip-grant-tables/#skip-grant-tables/' /etc/my.cnf || exit
 
