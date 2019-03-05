@@ -61,7 +61,7 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-1.1.1a'
+openssl='openssl-1.1.1b'
 if [ ! -d $nginx_install_path/openssl ]; then
 	echo 'installing '$openssl' ...'
 	if [ ! -f $base_path/$openssl.tar.gz ]; then
