@@ -107,19 +107,19 @@ noauth=true
 " > $mongodb_install_path/mongodb/mongodb.conf || exit
 
 mongod --config $mongodb_install_path/mongodb/mongodb.conf &
-echo '' >> /etc/rc.d/rc.local
+echo '' >> /etc/rc.local
 
-echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.d/rc.local
-echo 'rm -rf '$mongodb_install_path'/mongodb/mongodb.pid' >> /etc/rc.d/rc.local
-echo 'mongod --config '$mongodb_install_path'/mongodb/mongodb.conf &' >> /etc/rc.d/rc.local
-source /etc/rc.d/rc.local
+echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.local
+echo 'rm -rf '$mongodb_install_path'/mongodb/mongodb.pid' >> /etc/rc.local
+echo 'mongod --config '$mongodb_install_path'/mongodb/mongodb.conf &' >> /etc/rc.local
+source /etc/rc.local
 
 #创建超级管理员
 #db.createUser({user: "root",pwd: "xxxxxxxxxxxxx",roles: [{role:"dbAdminAnyDatabase",db:"admin"},{ role: "userAdminAnyDatabase",db:"admin"},{role:"readAnyDatabase",db:"admin"},{role:"readWriteAnyDatabase",db:"admin"}]})
 
 #单个数据库读写
-#db.createUser({user:"root",pwd: "xxxxxxxxxxxxxxxx",roles:[{role:"readWrite",db:"Kpoker"}]})
+#db.createUser({user:"root",pwd: "xxxxxxxxxxxxxxxx",roles:[{role:"readWrite",db:"xxxxxxxx"}]})
 
 #mongodb用户名密码登录
-#mongo -u root -p root --authenticationDatabase admin
+#mongo ip:port -u root -p root --authenticationDatabase admin
 
