@@ -26,9 +26,9 @@ systemctl restart docker
 #安装docker-compose
 pip uninstall urllib3 -y 
 pip uninstall chardet -y
-pip install requests
-pip install docker-compose
-pip install --upgrade pip
+pip install --upgrade pip -i https://pypi.douban.com/simple --trusted-host pypi.douban.com
+pip install requests -i https://pypi.douban.com/simple --trusted-host pypi.douban.com
+pip install docker-compose -i https://pypi.douban.com/simple --trusted-host pypi.douban.com
 
 #安装基础镜像alpine
 docker pull alpine
