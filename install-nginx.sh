@@ -278,7 +278,7 @@ server {
 	add_header Access-Control-Allow-Origin '*';
 	add_header Access-Control-Allow-Credentials 'true';
 	add_header Access-Control-Allow-Methods 'GET,POST,OPTIONS,PUT,DELETE,PATCH';
-	add_header Access-Control-Allow-Headers 'DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+	add_header Access-Control-Allow-Headers 'Keep-Alive,User-Agent,X-Requested-With,Content-Type,token,lang';
 
 	#不允许用框架、强制用https
 	add_header x-Content-Type-Options nosniff;
