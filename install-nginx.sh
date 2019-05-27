@@ -149,7 +149,7 @@ http {
 	fastcgi_temp_file_write_size 128k;
 
 	gzip on;
-	gzip_min_length 10k;
+	gzip_min_length 1k;
 	gzip_buffers 4 16k;
 	gzip_http_version 2.0;
 	gzip_comp_level 9;
