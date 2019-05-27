@@ -153,7 +153,7 @@ http {
 	gzip_buffers 4 16k;
 	gzip_http_version 2.0;
 	gzip_comp_level 9;
-	gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+	gzip_types text/plain application/json application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
 	gzip_vary on;	
 
 	server_tokens off;    
