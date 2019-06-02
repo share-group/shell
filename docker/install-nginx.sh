@@ -64,15 +64,16 @@ http {
 	fastcgi_busy_buffers_size 128k;
 	fastcgi_temp_file_write_size 128k;
 
+	#开启gzip压缩
 	gzip on;
-	gzip_min_length 10k;
+	gzip_min_length 1k;
 	gzip_buffers 4 16k;
-	gzip_http_version 1.0;
-	gzip_comp_level 4;
-	gzip_types text/plain application/x-javascript text/css application/xml;
-	gzip_vary on;	
+	gzip_comp_level 9;
+	gzip_types text/plain application/json application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png image/svg+xml image/x-icon;
+	gzip_vary off;	
 
-	server_tokens off;    
+	#不显示nginx的版本号
+	server_tokens off;   
 	   
 	include conf/web/*.conf;
 }

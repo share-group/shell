@@ -153,7 +153,7 @@ http {
 	gzip_min_length 1k;
 	gzip_buffers 4 16k;
 	gzip_comp_level 9;
-	gzip_types text/plain application/json application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png;
+	gzip_types text/plain application/json application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png image/svg+xml image/x-icon;
 	gzip_vary off;	
 
 	#不显示nginx的版本号
