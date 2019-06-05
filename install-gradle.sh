@@ -23,7 +23,7 @@ mkdir -p $install_path
 sh install-java.sh $gradle_install_path
 
 #下载gradle
-gradle='gradle-5.4'
+gradle='gradle-5.4.1'
 if [ ! -d $install_path/$gradle ]; then
 	echo 'installing '$gradle' ...'
 	if [ ! -f $base_path/$gradle.zip ]; then
@@ -37,7 +37,7 @@ if [ ! -d $install_path/$gradle ]; then
 	yes|cp -rf $gradle/* $gradle_install_path/gradle/
 	rm -rf $gradle_install_path/gradle/media
 	rm -rf $gradle_install_path/gradle/init.d
-	rm -rf $gradle_install_path/gradle/bin/gradle.bat
+	rm -rf $gradle_install_path/gradle/bin/*.bat
 	rm -rf $gradle_install_path/gradle/NOTICE
 	rm -rf $gradle_install_path/gradle/LICENSE
 	rm -rf $gradle_install_path/gradle/*.html
