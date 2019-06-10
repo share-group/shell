@@ -4,9 +4,13 @@
 #定义本程序的当前目录
 base_path=$(pwd)
 
+install_path='/install'
+rm -rf $install_path
+mkdir -p $install_path
+
 #安装docker
 yum remove -y docker docker-common docker-selinux docker-engine docker-ce
-yum install -y yum-utils device-mapper-persistent-data lvm2
+yum install -y yum-utils device-mapper-persistent-data lvm2 wget
 yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 yum-config-manager --enable docker-ce-edge
 yum-config-manager --enable docker-ce-testing
@@ -17,25 +21,17 @@ systemctl restart docker
 docker -v
 docker info
 
-#加速器
-curl -sSL https://get.daocloud.io/daotools/set_mirror.sh | sh -s http://30c125e3.m.daocloud.io
+#解决docker日志过大的问题
+mkdir -p /etc/docker
+echo '{"log-driver":"json-file","log-opts":{"max-size":"1g","max-file":"10"}}' > /etc/docker/daemon.json
 
 #重启docker
 systemctl restart docker
 
 #安装docker-compose
-pip uninstall urllib3 -y 
-pip uninstall chardet -y
-pip install --upgrade pip -i https://pypi.douban.com/simple --trusted-host pypi.douban.com
-pip install requests -i https://pypi.douban.com/simple --trusted-host pypi.douban.com
+cd $install_path && wget --no-cache https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 pip install docker-compose -i https://pypi.douban.com/simple --trusted-host pypi.douban.com
 
-#安装基础镜像alpine
-docker pull alpine
-
 #开机自启动
-chkconfig --level 35 iptables off
-echo '' >> /etc/rc.local
-echo 'chkconfig --level 35 iptables off' >> /etc/rc.local
 echo 'systemctl start docker' >> /etc/rc.local
 
