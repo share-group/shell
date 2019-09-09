@@ -29,8 +29,10 @@ echo '{"registry-mirrors":["http://f1361db2.m.daocloud.io"],"log-driver":"json-f
 systemctl restart docker
 
 #安装docker-compose
-cd $install_path && wget --no-cache https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64 && mv docker-compose-Linux-x86_64 docker-compose
-rm -rf /usr/bin/docker-compose && cp -rf $install_path/docker-compose /usr/bin/docker-compose && chmod 777 /usr/bin/docker-compose && docker-compose -v
+cd $install_path && wget --no-cache https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64
+mv docker-compose-Linux-x86_64 docker-compose
+chmod 777 /usr/bin/docker-compose
+docker-compose -v
 
 #开机自启动
 echo 'systemctl start docker' >> /etc/rc.local
