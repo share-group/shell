@@ -69,3 +69,4 @@ autoconf && ./configure --prefix=$git_install_path/git && make && make install |
 yes|cp -rf $git_install_path/git/bin/* /usr/bin/
 git --version
 
+#Linux中git用https连接时不用每次输入密码的方法：git config --global credential.helper 'cache --timeout=1000000000'
