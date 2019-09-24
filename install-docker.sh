@@ -30,7 +30,7 @@ systemctl restart docker
 
 #安装docker-compose
 cd $install_path && wget --no-cache https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64
-mv docker-compose-Linux-x86_64 docker-compose
+mv $install_path/docker-compose-Linux-x86_64 /usr/bin/docker-compose
 chmod 777 /usr/bin/docker-compose
 docker-compose -v
 
