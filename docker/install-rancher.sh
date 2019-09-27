@@ -11,13 +11,10 @@ fi
  
 #建立临时安装目录
 echo 'preparing working path...'
-install_path='/install'
-rm -rf $install_path
-mkdir -p $install_path
-mkdir -p $rancher_install_path/rancher/db
+mkdir -p $rancher_install_path/rancher/log
 
 #拉取镜像
-docker pull rancher/server
+docker pull rancher/rancher
 
 #启动rancher
-docker run --name rancher -d --restart=always -p 8080:8080 -v $rancher_install_path/rancher/db:/var/lib/mysql rancher/server
+docker run --name rancher -d --restart=unless-stopped -p 80:80 -p 443:443 -v $rancher_install_path/rancher:/var/lib/rancher -v $rancher_install_path/rancher/log/auditlog:/var/log/auditlog -e AUDIT_LEVEL=3 rancher/rancher

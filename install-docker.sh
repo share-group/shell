@@ -23,7 +23,7 @@ docker info
 
 #解决docker日志过大的问题
 mkdir -p /etc/docker
-echo '{"registry-mirrors":["http://f1361db2.m.daocloud.io"],"log-driver":"json-file","log-opts":{"max-size":"1g","max-file":"10"}}' > /etc/docker/daemon.json
+echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_check=true"],"registry-mirrors":["http://f1361db2.m.daocloud.io"],"log-driver":"json-file","log-opts":{"max-size":"1g","max-file":"10"}}' > /etc/docker/daemon.json
 
 #重启docker
 systemctl restart docker
