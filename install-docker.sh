@@ -26,7 +26,8 @@ mkdir -p /etc/docker
 echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_check=true"],"registry-mirrors":["http://f1361db2.m.daocloud.io"],"log-driver":"json-file","log-opts":{"max-size":"1g","max-file":"10"}}' > /etc/docker/daemon.json
 
 #重启docker
-systemctl restart docker
+
+systemctl daemon-reload && systemctl restart docker
 
 #安装docker-compose
 cd $install_path && wget --no-cache https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64
