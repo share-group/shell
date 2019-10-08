@@ -30,15 +30,15 @@ if [ ! -f $base_path/node-v$nodejs_version-linux-x64.tar.xz ]; then
 fi
 xz -d node-v$nodejs_version-linux-x64.tar.xz
 tar -xvf $base_path/node-v$nodejs_version-linux-x64.tar || exit
-rm -rf /usr/bin/node
-rm -rf /usr/bin/npm
 mv node-v$nodejs_version-linux-x64 nodejs
 mv nodejs $nodejs_install_path/
-yes|cp -rf $nodejs_install_path/nodejs/bin/node /usr/bin/
-ln -s $nodejs_install_path/nodejs/lib/node_modules/npm/bin/npm-cli.js /usr/bin/npm
+
+#添加环境变量
+echo 'PATH=$PATH:'$nodejs_install_path'/bin' >> /etc/profile || exit
+source /etc/profile || exit
 
 #更新npm版本
-npm --registry https://registry.npm.taobao.org i -g npm npm-check yarn ava nyc mocha tslint eslint typescript pm2
+npm --registry https://registry.npm.taobao.org i -g npm
 echo 'node version: '$(node -v)
 echo 'npm version: '$(npm -v)
 echo 'yarn version: '$(yarn -v)
