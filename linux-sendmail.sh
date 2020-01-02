@@ -15,7 +15,7 @@ function check() {
   url=$1
   ip=`ifconfig ens160 | grep "inet addr" | awk -F "[: ]+" '{print $4}'`
   code=`curl -I -s ${url} | head -1 | cut -d " " -f2`
-  if [ $code != "200" ]; then
+  if [[ $code != "200" ]]; then
     echo "$url 访问出现异常，请联系相关人员进行处理！" | mail -s "服务异常告警" $recv -aFrom:邮件发送来源\<xxxxxxxxxxxxxxxxx@com.cn\>
   fi
 }
