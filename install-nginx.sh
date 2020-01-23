@@ -48,7 +48,7 @@ fi
 
 #安装libiconv
 if [ ! -d $nginx_install_path/libiconv ]; then
-	libiconv='libiconv-1.15'
+	libiconv='libiconv-1.16'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
 		wget -O $base_path/$libiconv.tar.gz http://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
