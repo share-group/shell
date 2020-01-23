@@ -1,5 +1,5 @@
 #linux php自动安装程序
-#运行例子：sh install-php.sh 7.1.4 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-php.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-php.sh && sh install-php.sh 7.1.4 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -108,7 +108,7 @@ if [ ! -d $php_install_path/libxml2 ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-1.1.1b'
+openssl='openssl-1.1.1d'
 if [ ! -d $php_install_path/openssl ]; then
 	echo 'installing '$openssl' ...'
 	if [ ! -f $base_path/$openssl.tar.gz ]; then

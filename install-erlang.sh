@@ -22,7 +22,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 # 安装OpenSSL
-openssl='openssl-1.1.1b'
+openssl='openssl-1.1.1d'
 if [ ! -d $erlang_install_path/openssl ]; then
 	echo 'installing '$openssl' ...'
 	if [ ! -f $base_path/$openssl.tar.gz ]; then
