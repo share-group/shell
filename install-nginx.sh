@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	exit
 fi
 
-yum -y install curl wget gcc gcc-c++ make rsync lrzsz
+yum -y install curl wget gcc gcc-c++ make rsync lrzsz zlib-devel
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -98,23 +98,6 @@ if [ ! -d $install_path/$libatomic ]; then
 	tar zxvf $base_path/$libatomic.tar.gz -C $install_path || exit
 fi
 
-#安装jemalloc
-jemalloc='jemalloc-5.2.1'
-if [ ! -d $install_path/$jemalloc ]; then
-	echo 'installing '$jemalloc' ...'
-	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
-		echo $jemalloc'.tar.bz2 is not exists, system will going to download it...'
-		wget -O $base_path/$jemalloc.tar.bz2 http://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
-		echo 'download '$jemalloc' finished...'
-	fi
-	tar jxvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
-	cd $install_path/$jemalloc
-	rm -rf $nginx_install_path/jemalloc && ./configure --prefix=$nginx_install_path/jemalloc && make && make install || exit
-	echo $nginx_install_path"/jemalloc/lib" >> /etc/ld.so.conf
-	ldconfig -v
-	echo $jemalloc' install finished...'
-fi
-
 #安装nginx
 nginx='nginx-'$nginx_version
 echo 'installing '$nginx' ...'
@@ -127,7 +110,7 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E -ljemalloc" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-jemalloc=$install_path/$jemalloc --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_secure_link_module --with-http_gzip_static_module --with-http_degradation_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && make && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_secure_link_module --with-http_gzip_static_module --with-http_degradation_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && make && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'

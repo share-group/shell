@@ -19,13 +19,11 @@ install_path='/install'
 rm -rf $install_path
 mkdir -p $install_path
 
-yum -y install curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build bc perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed python-devel gd-devel libxml2 libxml2-dev libpcre3 libpcre3-dev socat perl-CPAN libtool sed net-snmp net-snmp-devel net-snmp-utils ncurses-devel dos2unix texinfo policycoreutils openssh-server openssh-clients postfix bison
-
-yum -y remove git
+yum -y install curl wget gcc gcc-c++ make rsync lrzsz
 
 cd $install_path
 
-datadumper='Data-Dumper-2.154'
+datadumper='Data-Dumper-2.173'
 if [ ! -f $base_path/$m4.tar.gz ]; then
 	wget -O $base_path/$datadumper.tar.gz http://install.ruanzhijun.cn/$datadumper.tar.gz || exit
 fi
