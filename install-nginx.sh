@@ -71,7 +71,7 @@ if [ ! -d $nginx_install_path/openssl ]; then
 	fi
 	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 	cd $install_path/$openssl
-	./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make && make test && make install || exit
+	./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make && make install || exit
 	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
 	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
 	rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
