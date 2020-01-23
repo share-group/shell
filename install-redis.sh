@@ -48,7 +48,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #安装jemalloc
-jemalloc='jemalloc-5.1.0'
+jemalloc='jemalloc-5.2.1'
 if [ ! -d $install_path/$jemalloc ]; then
 	echo 'installing '$jemalloc' ...'
 	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
@@ -56,7 +56,7 @@ if [ ! -d $install_path/$jemalloc ]; then
 		wget -O $base_path/$jemalloc.tar.bz2 http://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
 		echo 'download '$jemalloc' finished...'
 	fi
-	tar xvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
+	tar jxvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
 	mv $install_path/$jemalloc $install_path/jemalloc 
 fi 
 

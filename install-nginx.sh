@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	exit
 fi
 
-yum -y install curl wget gcc gcc-c++ make rsync lrzsz perl-Test-Harness
+yum -y install curl wget gcc gcc-c++ make rsync lrzsz
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -71,7 +71,7 @@ if [ ! -d $nginx_install_path/openssl ]; then
 	fi
 	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 	cd $install_path/$openssl
-	./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make && make install || exit
+	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make && make install || exit
 	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
 	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
 	rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
@@ -98,6 +98,23 @@ if [ ! -d $install_path/$libatomic ]; then
 	tar zxvf $base_path/$libatomic.tar.gz -C $install_path || exit
 fi
 
+#安装jemalloc
+jemalloc='jemalloc-5.2.1'
+if [ ! -d $install_path/$jemalloc ]; then
+	echo 'installing '$jemalloc' ...'
+	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
+		echo $jemalloc'.tar.bz2 is not exists, system will going to download it...'
+		wget -O $base_path/$jemalloc.tar.bz2 http://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
+		echo 'download '$jemalloc' finished...'
+	fi
+	tar jxvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
+	cd $install_path/$jemalloc
+	rm -rf $nginx_install_path/jemalloc && ./configure --prefix=$nginx_install_path/jemalloc && make && make install || exit
+	echo $nginx_install_path"/jemalloc/lib" >> /etc/ld.so.conf
+	ldconfig -v
+	echo $jemalloc' install finished...'
+fi
+
 #安装nginx
 nginx='nginx-'$nginx_version
 echo 'installing '$nginx' ...'
@@ -110,7 +127,7 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_secure_link_module --with-http_gzip_static_module --with-http_degradation_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && make && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E -ljemalloc" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-jemalloc=$install_path/$jemalloc --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_secure_link_module --with-http_gzip_static_module --with-http_degradation_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && make && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -285,7 +302,7 @@ server {
 	#不允许用框架、强制用https
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
-	add_header Strict-Transport-Security 'max-age=315360000; includeSubDomains; preload;';
+	add_header Strict-Transport-Security 'max-age=3153600000; includeSubDomains; preload;';
 }" > $nginx_install_path/nginx/conf/web/443.conf
 
 #修改环境变量
