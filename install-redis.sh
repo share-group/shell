@@ -28,7 +28,6 @@ cluster-node-timeout 15000" > redis.conf
 
 #定义本程序的当前目录
 base_path=$(pwd)
-ntpdate ntp.api.bz
 
 #处理外部参数
 redis_version=$1

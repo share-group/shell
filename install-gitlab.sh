@@ -2,7 +2,6 @@
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-gitlab.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-gitlab.sh && sh install-gitlab.sh
 #定义本程序的当前目录
 base_path=$(pwd)
-ntpdate ntp.api.bz
 
 #建立临时安装目录
 echo 'preparing working path...'

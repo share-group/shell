@@ -1,6 +1,5 @@
 #linux nodejs自动安装程序 
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 11.4.0 /usr/local
-ntpdate ntp.api.bz
  
 #定义本程序的当前目录
 base_path=$(pwd)

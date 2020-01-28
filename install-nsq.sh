@@ -3,7 +3,6 @@
  
 #定义本程序的当前目录
 base_path=$(pwd)
-ntpdate ntp.api.bz
 
 #建立临时安装目录
 echo 'preparing working path...'

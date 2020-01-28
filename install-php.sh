@@ -3,7 +3,6 @@
  
 #定义本程序的当前目录
 base_path=$(pwd)
-ntpdate ntp.api.bz
 
 #处理外部参数
 php_version=$1

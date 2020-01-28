@@ -1,5 +1,5 @@
 #linux docker
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -30,7 +30,7 @@ echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_che
 systemctl daemon-reload && systemctl restart docker
 
 #安装docker-compose
-cd $install_path && wget --no-cache https://github.com/docker/compose/releases/download/1.24.1/docker-compose-Linux-x86_64
+cd $install_path && wget --no-check-certificate --no-cache https://github.com/docker/compose/releases/download/v1.25.2/docker-compose-Linux-x86_64
 mv $install_path/docker-compose-Linux-x86_64 /usr/bin/docker-compose
 chmod 777 /usr/bin/docker-compose
 docker-compose -v
