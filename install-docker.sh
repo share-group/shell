@@ -9,17 +9,14 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #安装docker
-yum remove -y docker docker-common docker-selinux docker-engine docker-ce
-yum install -y yum-utils device-mapper-persistent-data lvm2 wget
-yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-yum-config-manager --enable docker-ce-edge
-yum-config-manager --enable docker-ce-testing
-yum-config-manager --disable docker-ce-edge
-yum makecache fast
-yum install -y docker-ce docker-ce-cli containerd.io
+cd /etc/yum.repos.d && rm -f CentOS-Base.repo CentOS-AppStream.repo CentOS-PowerTools.repo CentOS-centosplus.repo CentOS-Extras.repo && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/hackyoMa/docker-centos/8/CentOS-Base.repo && yum makecache
+yum install -y podman-manpages
+yum install -y http://install.ruanzhijun.cn/containerd.io-1.2.13-3.1.el7.x86_64.rpm
+yum install -y http://install.ruanzhijun.cn/docker-ce-cli-19.03.7-3.el7.x86_64.rpm
+yum install -y http://install.ruanzhijun.cn/docker-ce-19.03.7-3.el7.x86_64.rpm
 systemctl restart docker
-docker -v
-docker info
+docker -v || exit
+docker info || exit
 
 #解决docker日志过大的问题
 mkdir -p /etc/docker
@@ -30,7 +27,7 @@ echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_che
 systemctl daemon-reload && systemctl restart docker
 
 #安装docker-compose
-cd $install_path && wget --no-check-certificate --no-cache https://github.com/docker/compose/releases/download/v1.25.2/docker-compose-Linux-x86_64
+cd $install_path && wget --no-check-certificate --no-cache http://install.ruanzhijun.cn/docker-compose-Linux-x86_64
 mv $install_path/docker-compose-Linux-x86_64 /usr/bin/docker-compose
 chmod 777 /usr/bin/docker-compose
 docker-compose -v
