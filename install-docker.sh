@@ -16,7 +16,7 @@ yum-config-manager --enable docker-ce-edge
 yum-config-manager --enable docker-ce-testing
 yum-config-manager --disable docker-ce-edge
 yum makecache fast
-yum install -y docker-ce
+yum install -y docker-ce docker-ce-cli containerd.io
 systemctl restart docker
 docker -v
 docker info
