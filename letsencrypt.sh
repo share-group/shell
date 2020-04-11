@@ -6,7 +6,7 @@ rm -rf /root/.acme.sh
 mkdir -p /root/.acme.sh
 
 #下载最新的acme.sh脚本
-rm -rf /letsencrypt/acme.sh && rm -rf /letsencrypt/*.zip
+rm -rf /letsencrypt/acme.sh && rm -rf /letsencrypt/*.zip && rm -rf /letsencrypt/acme.sh-master
 wget --no-check-certificate --no-cache https://github.com/acmesh-official/acme.sh/archive/master.zip || exit
 unzip master.zip || exit
 mv /letsencrypt/acme.sh-master/acme.sh /letsencrypt/acme.sh
