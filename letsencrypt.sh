@@ -6,8 +6,10 @@ rm -rf /root/.acme.sh
 mkdir -p /root/.acme.sh
 
 #下载最新的acme.sh脚本
-rm -rf /letsencrypt/acme.sh
-wget --no-cache https://raw.githubusercontent.com/Neilpang/acme.sh/master/acme.sh || exit
+rm -rf /letsencrypt/acme.sh && rm -rf /letsencrypt/*.zip
+wget --no-check-certificate --no-cache https://github.com/acmesh-official/acme.sh/archive/master.zip || exit
+unzip master.zip || exit
+mv /letsencrypt/acme.sh-master/acme.sh /letsencrypt/acme.sh
 chmod 777 acme.sh
 
 #强制更新一次，实时使用最新的协议
