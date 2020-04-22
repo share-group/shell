@@ -27,9 +27,7 @@ echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_che
 systemctl daemon-reload && systemctl restart docker
 
 #安装docker-compose
-cd $install_path && wget --no-check-certificate --no-cache http://install.ruanzhijun.cn/docker-compose-Linux-x86_64
-mv $install_path/docker-compose-Linux-x86_64 /usr/bin/docker-compose
-chmod 777 /usr/bin/docker-compose
+cd /usr/bin && wget --no-check-certificate --no-cache http://install.ruanzhijun.cn/docker-compose && chmod 777 docker-compose
 docker-compose -v
 
 #开机自启动
