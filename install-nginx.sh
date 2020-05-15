@@ -13,7 +13,8 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	exit
 fi
 
-yum -y install curl wget gcc gcc-c++ make rsync lrzsz zlib-devel gd-devel
+worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
+yum -y install curl wget gcc gcc-c++ make rsync lrzsz gd-devel libxml2 libxml2-dev
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -32,9 +33,17 @@ if [ ! -d $install_path/$zlib ]; then
 	fi
 	tar zxvf $base_path/$zlib.tar.gz -C $install_path || exit
 	cd $install_path/$zlib
-	./configure --prefix=$nginx_install_path/zlib --shared && make && make install || exit
+	./configure --prefix=$nginx_install_path/zlib --shared && make -j $worker_processes && make test && make install || exit
 	cp $install_path/$zlib/zutil.h /usr/local/include
 	cp $install_path/$zlib/zutil.c /usr/local/include
+	cp $nginx_install_path/zlib/include/zlib.h /usr/local/include
+	cp $nginx_install_path/zlib/include/zconf.h /usr/local/include
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.a libz.a
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so libz.so
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1 libz.so.1
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.2.11 libz.so.1.2.11
+	echo $nginx_install_path"/zlib/lib" >> /etc/ld.so.conf
+	ldconfig
 fi
 
 #下载pcre
@@ -59,7 +68,7 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 	cd $install_path/$libiconv/srclib
 	sed -i -e '/gets is a security/d' ./stdio.in.h
 	cd $install_path/$libiconv
-	./configure --prefix=$nginx_install_path/libiconv -enable-shared --host=arm-linux && make && make install || exit
+	./configure --prefix=$nginx_install_path/libiconv -enable-shared --host=arm-linux && make -j $worker_processes && make install || exit
 	yes|cp $nginx_install_path/libiconv/bin/* /usr/bin/
 fi
 
@@ -74,7 +83,7 @@ if [ ! -d $nginx_install_path/openssl ]; then
 	fi
 	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 	cd $install_path/$openssl
-	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make && make install || exit
+	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make -j $worker_processes && make install || exit
 	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
 	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
 	rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
@@ -113,12 +122,11 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-http_xslt_module --with-http_image_filter_mdoule --with-libatomic=$install_path/$libatomic && make && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-http_geo_module --with-http_map_module --with-http_xslt_module --with-http_image_filter_module --with-libatomic=$install_path/$libatomic && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
 ulimit='65535' #单个进程最大打开文件数
-worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
 echo "user root root;
 worker_cpu_affinity auto;
 worker_processes "$worker_processes";
