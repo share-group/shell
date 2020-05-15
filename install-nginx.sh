@@ -13,7 +13,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	exit
 fi
 
-yum -y install curl wget gcc gcc-c++ make rsync lrzsz zlib-devel
+yum -y install curl wget gcc gcc-c++ make rsync lrzsz zlib-devel gd-devel
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -31,6 +31,10 @@ if [ ! -d $install_path/$zlib ]; then
 		echo 'download '$zlib' finished...'
 	fi
 	tar zxvf $base_path/$zlib.tar.gz -C $install_path || exit
+	cd $install_path/$zlib
+	./configure --prefix=$nginx_install_path/zlib --shared && make && make install || exit
+	cp $install_path/$zlib/zutil.h /usr/local/include
+	cp $install_path/$zlib/zutil.c /usr/local/include
 fi
 
 #下载pcre
@@ -109,7 +113,7 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_sub_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_secure_link_module --with-http_gzip_static_module --with-http_degradation_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && make && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-http_xslt_module --with-http_image_filter_mdoule --with-libatomic=$install_path/$libatomic && make && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
