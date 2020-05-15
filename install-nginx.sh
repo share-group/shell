@@ -34,7 +34,7 @@ if [ ! -d $install_path/$zlib ]; then
 fi
 
 #下载pcre
-pcre='pcre-8.43'
+pcre='pcre-8.44'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...' 
 	if [ ! -f $base_path/$pcre.tar.gz ]; then

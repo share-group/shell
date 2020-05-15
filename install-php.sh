@@ -129,7 +129,7 @@ if [ ! -d $php_install_path/openssl ]; then
 fi
 
 # 安装pcre
-pcre='pcre-8.43'
+pcre='pcre-8.44'
 if [ ! -d $php_install_path/pcre ]; then
 	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
