@@ -14,7 +14,6 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 yum -y install curl wget gcc gcc-c++ make rsync lrzsz zlib-devel
-echo '199.232.28.133  raw.githubusercontent.com' >> /etc/hosts
 
 #建立临时安装目录
 echo 'preparing working path...'
