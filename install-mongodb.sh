@@ -65,7 +65,7 @@ net:
 
 #安全
 security:
-   #仅对 mongod 有效；enable-客户端可以通过用户名和密码认证的方式访问系统的数据；disabled-客户端不需要密码即可访问数据库数据
+   #仅对 mongod 有效；enabled-客户端可以通过用户名和密码认证的方式访问系统的数据；disabled-客户端不需要密码即可访问数据库数据
    authorization: disabled
 
 #进程管理

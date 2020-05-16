@@ -151,6 +151,8 @@ http {
 	client_header_buffer_size 32k;
 	client_max_body_size 200m;
 	
+	add_header X-Real-IP $remote_addr;
+	
 	fastcgi_connect_timeout 600;
 	fastcgi_send_timeout 600;
 	fastcgi_read_timeout 600;
