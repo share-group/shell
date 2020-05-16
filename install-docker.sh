@@ -9,7 +9,6 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #安装docker
-cd /etc/yum.repos.d && rm -f CentOS-Base.repo CentOS-AppStream.repo CentOS-PowerTools.repo CentOS-centosplus.repo CentOS-Extras.repo && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/hackyoMa/docker-centos/8/CentOS-Base.repo && yum makecache
 yum install -y podman-manpages
 yum install -y http://install.ruanzhijun.cn/containerd.io-1.2.13-3.1.el7.x86_64.rpm
 yum install -y http://install.ruanzhijun.cn/docker-ce-cli-19.03.7-3.el7.x86_64.rpm

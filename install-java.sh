@@ -19,7 +19,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载java
-jdk='jdk-11_linux-x64_bin'
+jdk='jdk-11.0.5_linux-x64_bin'
 echo 'installing '$jdk' ...'
 if [ ! -f $base_path/$jdk.tar.gz ]; then
 	echo $jdk'.tar.gz is not exists, system will going to download it...'
