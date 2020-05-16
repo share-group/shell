@@ -19,18 +19,18 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载java
-jdk='jdk-11.0.5_linux-x64_bin'
+jdk='jdk-11.0.5'
 echo 'installing '$jdk' ...'
-if [ ! -f $base_path/$jdk.tar.gz ]; then
+if [ ! -f $base_path/$jdk'_linux-x64_bin.tar.gz' ]; then
 	echo $jdk'.tar.gz is not exists, system will going to download it...'
-	wget -O $base_path/$jdk.tar.gz http://install.ruanzhijun.cn/$jdk.tar.gz || exit
-	echo 'download '$jdk'.tar.gz finished...'
+	wget -O $base_path/$jdk'_linux-x64_bin.tar.gz http://install.ruanzhijun.cn/'$jdk'_linux-x64_bin.tar.gz' || exit
+	echo 'download '$jdk'_linux-x64_bin.tar.gz finished...'
 fi
 tar zxvf $jdk.tar.gz -C $java_install_path
 
 echo "" >> /etc/profile
 echo "# set Java environment" >> /etc/profile
-echo "JAVA_HOME="$java_install_path"/jdk-11" >> /etc/profile
+echo "JAVA_HOME="$java_install_path"/"$jdk >> /etc/profile
 echo "PATH=\$JAVA_HOME/bin:\$PATH" >> /etc/profile
 echo "export JAVA_HOME" >> /etc/profile
 echo "export PATH" >> /etc/profile
