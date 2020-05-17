@@ -33,7 +33,7 @@ mv node-v$nodejs_version-linux-x64 nodejs
 mv nodejs $nodejs_install_path/
 
 #添加环境变量
-echo 'PATH=$PATH:'$nodejs_install_path'/bin' >> /etc/profile || exit
+echo 'PATH=$PATH:'$nodejs_install_path'/nodejs/bin' >> /etc/profile || exit
 source /etc/profile || exit
 
 #更新npm版本

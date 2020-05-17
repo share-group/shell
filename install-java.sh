@@ -5,10 +5,11 @@
 base_path=$(pwd)
 
 #处理外部参数
-java_install_path=$1
-if [ ! $java_install_path ]; then
-	echo 'error command!!! you must input java install path...'
-	echo 'for example: sh install-java.sh /usr/local'
+java_version=$1
+java_install_path=$2
+if [ ! $java_version ] || [ ! $java_install_path ]; then
+	echo 'error command!!! you must input nginx version and install path...'
+	echo 'for example: sh install-java.sh jdk-11.0.5 /usr/local'
 	exit
 fi
 
@@ -19,11 +20,11 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载java
-jdk='jdk-11.0.5'
+jdk=$java_version
 echo 'installing '$jdk' ...'
 if [ ! -f $base_path/$jdk'_linux-x64_bin.tar.gz' ]; then
-	echo $jdk'.tar.gz is not exists, system will going to download it...'
-	wget -O $base_path/$jdk'_linux-x64_bin.tar.gz http://install.ruanzhijun.cn/'$jdk'_linux-x64_bin.tar.gz' || exit
+	echo $base_path/$jdk'_linux-x64_bin.tar.gz is not exists, system will going to download it...'
+	wget -O $base_path"/"$jdk"_linux-x64_bin.tar.gz http://install.ruanzhijun.cn/"$jdk"_linux-x64_bin.tar.gz" || exit
 	echo 'download '$jdk'_linux-x64_bin.tar.gz finished...'
 fi
 tar zxvf $jdk.tar.gz -C $java_install_path

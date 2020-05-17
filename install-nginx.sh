@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
-yum -y install curl wget gcc gcc-c++ make rsync lrzsz gd-devel libxml2 libxml2-dev libxslt-devel GeoIP GeoIP-devel GeoIP-data
+yum -y install curl wget gcc gcc-c++ make rsync lrzsz
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -74,25 +74,31 @@ fi
 
 # 安装OpenSSL
 openssl='openssl-1.1.1g'
-if [ ! -d $nginx_install_path/openssl ]; then
-	echo 'installing '$openssl' ...'
-	if [ ! -f $base_path/$openssl.tar.gz ]; then
-		echo $openssl'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$openssl.tar.gz http://install.ruanzhijun.cn/$openssl.tar.gz || exit
-		echo 'download '$openssl' finished...'
-	fi
-	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
-	cd $install_path/$openssl
-	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make -j $worker_processes && make install || exit
-	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
-	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
-	rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
-	rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s $nginx_install_path/openssl/lib/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
-	echo $nginx_install_path"/openssl/lib" >> /etc/ld.so.conf
-	ldconfig -v
-	yes|cp $nginx_install_path/openssl/bin/* /usr/bin/
-	echo $openssl' install finished...'
+if [ ! -f $base_path/$openssl.tar.gz ]; then
+	echo $openssl'.tar.gz is not exists, system will going to download it...'
+	wget -O $base_path/$openssl.tar.gz http://install.ruanzhijun.cn/$openssl.tar.gz || exit
+	echo 'download '$openssl' finished...'
 fi
+# if [ ! -d $nginx_install_path/openssl ]; then
+	# echo 'installing '$openssl' ...'
+	# if [ ! -f $base_path/$openssl.tar.gz ]; then
+		# echo $openssl'.tar.gz is not exists, system will going to download it...'
+		# wget -O $base_path/$openssl.tar.gz http://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		# echo 'download '$openssl' finished...'
+	# fi
+	# tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+	# cd $install_path/$openssl
+	# rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make -j $worker_processes && make install || exit
+	# rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
+	# rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
+	# rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
+	# rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s $nginx_install_path/openssl/lib/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
+	# rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s /usr/lib64/libcrypto.so.1.1.1 /usr/lib64/libcrypto.so.1.1
+	# echo $nginx_install_path"/openssl/lib" >> /etc/ld.so.conf
+	# ldconfig -v
+	# yes|cp $nginx_install_path/openssl/bin/* /usr/bin/
+	# echo $openssl' install finished...'
+# fi
 
 #再解压一次给nginx编译用
 rm -rf $install_path/$openssl
@@ -122,7 +128,7 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-http_geoip_module --with-http_xslt_module --with-http_image_filter_module --with-libatomic=$install_path/$libatomic && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -232,7 +238,7 @@ server {
 	#需要用户名密码访问
 	#location / {
 	#		auth_basic "Authorized users only";
-	#		auth_basic_user_file /usr/local/tengine/conf/web/htpasswd;  #密码文件格式：gatherup.cc:/XJt5jAl/dKTI
+	#		auth_basic_user_file /usr/local/tengine/conf/web/htpasswd;  #密码文件格式：baidu.com:/XJt5jAl/dKTI
 	#}
 	
 	#查看nginx状态
