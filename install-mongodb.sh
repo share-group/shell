@@ -1,5 +1,5 @@
 #linux mongodb自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mongodb.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-mongodb.sh && sh install-mongodb.sh 4.0.10 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mongodb.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-mongodb.sh && sh install-mongodb.sh 4.2.6 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ mongodb_version=$1
 mongodb_install_path=$2
 if [ ! $mongodb_version ] || [ ! $mongodb_install_path ] ; then
 	echo 'error command!!! you must input mongodb version and install path...'
-	echo 'for example: sh install-mongodb.sh 4.0.10 /usr/local'
+	echo 'for example: sh install-mongodb.sh 4.2.6 /usr/local'
 	exit
 fi
 
@@ -25,7 +25,7 @@ rm -rf $mongodb_install_path/mongodb
 
 wget -O $base_path/mongodb-$mongodb_version.tgz http://install.ruanzhijun.cn/mongodb-linux-x86_64-$mongodb_version.tgz || exit
 tar zxvf $base_path/mongodb-$mongodb_version.tgz -C $mongodb_install_path || exit
-mv $mongodb_install_path/mongodb-linux-x86_64-$mongodb_version $mongodb_install_path/mongodb
+mv $mongodb_install_path/mongodb-linux-x86_64-rhel70-$mongodb_version $mongodb_install_path/mongodb
 rm -rf $mongodb_install_path/mongodb/data
 mkdir -p $mongodb_install_path/mongodb/data
 
