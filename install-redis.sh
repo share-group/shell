@@ -1,5 +1,5 @@
 #linux redis自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-redis.sh && sh install-redis.sh 5.0.2 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-redis.sh && sh install-redis.sh 6.0.1 /usr/local
 
 function cluster(){ 
 	redis_install_path=$1;
@@ -34,11 +34,11 @@ redis_version=$1
 redis_install_path=$2
 if [ ! $redis_version ] || [ ! $redis_install_path ]; then
 	echo 'error command!!! you must input redis version and install path...'
-	echo 'for example: sh install-redis.sh 5.0.2 /usr/local'
+	echo 'for example: sh install-redis.sh 6.0.1 /usr/local'
 	exit
 fi
 
-yum -y install gcc gcc-c++ ruby ruby-devel rubygems 
+yum -y install gcc gcc-c++ 
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -90,10 +90,6 @@ auto-aof-rewrite-percentage 0
 requirepass admin" > $redis_install_path/redis/redis.conf
 fi
 
-#设置ruby gem源为Ruby China
-gem sources --add https://gems.ruby-china.org/
-gem install redis
-
 #关闭防火墙
 systemctl stop firewalld
 systemctl disable firewalld.service
@@ -101,17 +97,10 @@ systemctl disable firewalld.service
 #redis全局命令
 yes|cp -rf $redis_install_path'/redis/src/redis-server' /usr/bin/
 yes|cp -rf $redis_install_path'/redis/src/redis-cli' /usr/bin/
-yes|cp -rf $redis_install_path'/redis/src/redis-trib.rb' /usr/bin/
-source /etc/rc.local
 
-#启动单点的redis
+#启动redis
 redis-server $redis_install_path/redis/redis.conf
 
-#默认创建一个6个节点(3主3从)的集群
-cluster $redis_install_path 7000
-cluster $redis_install_path 7001
-cluster $redis_install_path 7002
-cluster $redis_install_path 7003
-cluster $redis_install_path 7004
-cluster $redis_install_path 7005
-redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005
+#开机自启动
+echo 'redis-server '$redis_install_path'/redis/redis.conf &' >> /etc/rc.local
+source /etc/rc.local

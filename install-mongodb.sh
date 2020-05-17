@@ -118,6 +118,7 @@ operationProfiling:
 mongod --config $mongodb_install_path/mongodb/mongodb.conf &
 echo '' >> /etc/rc.local
 
+#开机自启动
 echo 'rm -rf '$mongodb_install_path'/mongodb/data/mongod.lock' >> /etc/rc.local
 echo 'rm -rf '$mongodb_install_path'/mongodb/mongodb.pid' >> /etc/rc.local
 echo 'mongod --config '$mongodb_install_path'/mongodb/mongodb.conf &' >> /etc/rc.local
