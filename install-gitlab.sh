@@ -24,7 +24,7 @@ systemctl reload firewalld
 cd $install_path
 gitlab='gitlab-ce-11.3.4-ce.0.el7.x86_64.rpm'
 if [ ! -f $install_path/$gitlab ]; then
-	wget --no-cache http://install.ruanzhijun.cn/$gitlab || exit
+	wget --no-cache https://install.ruanzhijun.cn/$gitlab || exit
 fi
 rpm -ivh $gitlab
 

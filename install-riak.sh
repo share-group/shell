@@ -43,7 +43,7 @@ if [ ! -d $riak_install_path/riak ]; then
 	echo 'installing riak '$riak'...'
 	if [ ! -f $base_path/riak-$riak.tar.gz ]; then
 		echo 'riak-'$riak'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/riak-$riak.tar.gz http://install.ruanzhijun.cn/riak-$riak.tar.gz || exit
+		wget -O $base_path/riak-$riak.tar.gz https://install.ruanzhijun.cn/riak-$riak.tar.gz || exit
 		echo 'download riak '$riak' finished...'
 	fi
 	tar zxvf $base_path/riak-$riak.tar.gz -C $install_path || exit

@@ -24,7 +24,7 @@ if [ ! -d $install_path/$jenkins ]; then
 	echo 'installing '$jenkins' ...'
 	if [ ! -f $base_path/$jenkins ]; then
 		echo $jenkins' is not exists, system will going to download it...'
-		wget -O $base_path/$jenkins http://install.ruanzhijun.cn/$jenkins || exit
+		wget -O $base_path/$jenkins https://install.ruanzhijun.cn/$jenkins || exit
 		echo 'download '$jenkins' finished...'
 	fi
 fi

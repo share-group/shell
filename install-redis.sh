@@ -52,7 +52,7 @@ if [ ! -d $install_path/$jemalloc ]; then
 	echo 'installing '$jemalloc' ...'
 	if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
 		echo $jemalloc'.tar.bz2 is not exists, system will going to download it...'
-		wget -O $base_path/$jemalloc.tar.bz2 http://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
+		wget -O $base_path/$jemalloc.tar.bz2 https://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
 		echo 'download '$jemalloc' finished...'
 	fi
 	tar jxvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
@@ -63,7 +63,7 @@ fi
 if [ ! -d $redis_install_path/redis ]; then
 	if [ ! -f $base_path/redis-$redis_version.tar.gz ]; then
 		echo 'redis-'$redis_version'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/redis-$redis_version.tar.gz http://install.ruanzhijun.cn/redis-$redis_version.tar.gz || exit
+		wget -O $base_path/redis-$redis_version.tar.gz https://install.ruanzhijun.cn/redis-$redis_version.tar.gz || exit
 		echo 'download redis-'$redis_version'.tar.gz finished...'
 	fi
 	tar zxvf $base_path/redis-$redis_version.tar.gz -C $redis_install_path || exit

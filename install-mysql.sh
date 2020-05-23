@@ -26,7 +26,7 @@ if [ ! -d $mysql_install_path/cmake ]; then
 	echo 'installing '$cmake'...'
 	if [ ! -f $base_path/$cmake.tar.gz ]; then
 		echo $cmake'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$cmake.tar.gz http://install.ruanzhijun.cn/$cmake.tar.gz || exit
+		wget -O $base_path/$cmake.tar.gz https://install.ruanzhijun.cn/$cmake.tar.gz || exit
 		echo 'download '$cmake' finished...'
 	fi
 	tar zxvf $base_path/$cmake.tar.gz -C $install_path || exit
@@ -43,7 +43,7 @@ if [ ! -d $install_path/$boost ]; then
 	echo 'installing '$boost' ...'
 	if [ ! -f $base_path/$boost.tar.gz ]; then
 		echo $boost'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$boost.tar.gz http://install.ruanzhijun.cn/$boost.tar.gz || exit
+		wget -O $base_path/$boost.tar.gz https://install.ruanzhijun.cn/$boost.tar.gz || exit
 		echo 'download '$boost' finished...'
 	fi
 	tar zxvf $base_path/$boost.tar.gz -C $install_path || exit
@@ -71,7 +71,7 @@ mysql='mysql-8.0.13'
 if [ ! -d $install_path/$mysql ]; then
 	if [ ! -f $base_path/$mysql.tar.gz ]; then
 		echo $mysql'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$mysql.tar.gz http://install.ruanzhijun.cn/$mysql.tar.gz || exit
+		wget -O $base_path/$mysql.tar.gz https://install.ruanzhijun.cn/$mysql.tar.gz || exit
 		echo 'download '$mysql' finished...'
 	fi
 	tar zxvf $base_path/$mysql.tar.gz -C $install_path || exit

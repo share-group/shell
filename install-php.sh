@@ -26,7 +26,7 @@ yum -y install gcc libc6-dev gcc-c++ nscd perl-devel perl-ExtUtils-Embed geoip-d
 if [ ! -d $php_install_path/m4 ]; then
 	m4='m4-1.4.17'
 	if [ ! -f $base_path/$m4.tar.gz ]; then
-		wget -O $base_path/$m4.tar.gz http://install.ruanzhijun.cn/$m4.tar.gz || exit
+		wget -O $base_path/$m4.tar.gz https://install.ruanzhijun.cn/$m4.tar.gz || exit
 	fi
 	tar zxvf $base_path/$m4.tar.gz -C $install_path || exit
 	cd $install_path/$m4
@@ -37,7 +37,7 @@ fi
 if [ ! -d $php_install_path/autoconf ]; then
 	autoconf='autoconf-2.69'
 	if [ ! -f $base_path/$autoconf.tar.gz ]; then
-		wget -O $base_path/$autoconf.tar.gz http://install.ruanzhijun.cn/$autoconf.tar.gz || exit
+		wget -O $base_path/$autoconf.tar.gz https://install.ruanzhijun.cn/$autoconf.tar.gz || exit
 	fi
 	tar zxvf $base_path/$autoconf.tar.gz -C $install_path || exit
 	cd $install_path/$autoconf
@@ -49,7 +49,7 @@ fi
 if [ ! -d $php_install_path/libiconv ]; then
 	libiconv='libiconv-1.16'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
-		wget -O $base_path/$libiconv.tar.gz http://install.ruanzhijun.cn/$libiconv.tar.gz || exit
+		wget -O $base_path/$libiconv.tar.gz https://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
 	tar zxvf $base_path/$libiconv.tar.gz -C $install_path || exit
 	cd $install_path/$libiconv/srclib
@@ -65,7 +65,7 @@ if [ ! -d $php_install_path/zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
 		echo $zlib'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$zlib.tar.gz http://install.ruanzhijun.cn/$zlib.tar.gz || exit
+		wget -O $base_path/$zlib.tar.gz https://install.ruanzhijun.cn/$zlib.tar.gz || exit
 		echo 'download '$zlib' finished...'
 	fi
 	tar zxvf $base_path/$zlib.tar.gz -C $install_path || exit
@@ -80,7 +80,7 @@ if [ ! -d $php_install_path/python ]; then
 	echo 'installing '$python' ...'
 	if [ ! -f $base_path/$python.tgz ]; then
 		echo $python'.tgz is not exists, system will going to download it...'
-		wget -O $base_path/$python.tgz http://install.ruanzhijun.cn/$python.tgz || exit
+		wget -O $base_path/$python.tgz https://install.ruanzhijun.cn/$python.tgz || exit
 		echo 'download '$python' finished...'
 	fi
 	tar xvf $base_path/$python.tgz -C $install_path || exit
@@ -96,7 +96,7 @@ if [ ! -d $php_install_path/libxml2 ]; then
 	echo 'installing '$libxml' ...'
 	if [ ! -f $base_path/$libxml.tar.gz ]; then
 		echo $libxml'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$libxml.tar.gz http://install.ruanzhijun.cn/$libxml.tar.gz || exit
+		wget -O $base_path/$libxml.tar.gz https://install.ruanzhijun.cn/$libxml.tar.gz || exit
 		echo 'download '$libxml' finished...'
 	fi
 	tar zxvf $base_path/$libxml.tar.gz -C $install_path || exit
@@ -112,7 +112,7 @@ if [ ! -d $php_install_path/openssl ]; then
 	echo 'installing '$openssl' ...'
 	if [ ! -f $base_path/$openssl.tar.gz ]; then
 		echo $openssl'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$openssl.tar.gz http://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 		echo 'download '$openssl' finished...'
 	fi
 	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
@@ -134,7 +134,7 @@ if [ ! -d $php_install_path/pcre ]; then
 	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
 		echo $pcre'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$pcre.tar.gz http://install.ruanzhijun.cn/$pcre.tar.gz || exit
+		wget -O $base_path/$pcre.tar.gz https://install.ruanzhijun.cn/$pcre.tar.gz || exit
 		echo 'download '$pcre' finished...'
 	fi
 	tar zxvf $base_path/$pcre.tar.gz -C $install_path || exit
@@ -150,7 +150,7 @@ if [ ! -d $php_install_path/curl ]; then
 	echo 'installing '$curl' ...'
 	if [ ! -f $base_path/$curl.tar.gz ]; then
 		echo $curl'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$curl.tar.gz http://install.ruanzhijun.cn/$curl.tar.gz || exit
+		wget -O $base_path/$curl.tar.gz https://install.ruanzhijun.cn/$curl.tar.gz || exit
 		echo 'download '$curl' finished...'
 	fi
 	tar zxvf $base_path/$curl.tar.gz -C $install_path || exit
@@ -166,7 +166,7 @@ if [ ! -d $php_install_path/libmcrypt ]; then
 	echo 'installing libmcrypt-'$libmcrypt' ...'
 	if [ ! -f $base_path/libmcrypt-$libmcrypt.tar.gz ]; then
 		echo 'libmcrypt-'$libmcrypt'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/libmcrypt-$libmcrypt.tar.gz http://install.ruanzhijun.cn/libmcrypt-$libmcrypt.tar.gz || exit
+		wget -O $base_path/libmcrypt-$libmcrypt.tar.gz https://install.ruanzhijun.cn/libmcrypt-$libmcrypt.tar.gz || exit
 		echo 'download libmcrypt-'$libmcrypt' finished...'
 	fi
 	tar zxvf $base_path/libmcrypt-$libmcrypt.tar.gz -C $install_path || exit
@@ -182,7 +182,7 @@ if [ ! -d $php_install_path/bz2 ]; then
 	echo 'installing bz2-'$bz2'...'
 	if [ ! -f $base_path/bzip2-$bz2.tar.gz ]; then
 	echo $bz2'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/bzip2-$bz2.tar.gz http://install.ruanzhijun.cn/bzip2-$bz2.tar.gz || exit
+		wget -O $base_path/bzip2-$bz2.tar.gz https://install.ruanzhijun.cn/bzip2-$bz2.tar.gz || exit
 		echo 'download bzip2-'$bz2' finished...'
 	fi
 	tar zxvf $base_path/bzip2-$bz2.tar.gz -C $install_path || exit
@@ -196,7 +196,7 @@ if [ ! -d $php_install_path/icu ]; then
 	echo 'installing icu...'
 	if [ ! -f $base_path/icu.tgz ]; then
 	echo 'icu.tgz is not exists, system will going to download it...'
-		wget -O $base_path/icu.tgz http://install.ruanzhijun.cn/icu.tgz || exit
+		wget -O $base_path/icu.tgz https://install.ruanzhijun.cn/icu.tgz || exit
 		echo 'download icu.tgz finished...'
 	fi
 	tar zxf $base_path/icu.tgz -C $install_path || exit
@@ -212,7 +212,7 @@ if [ ! -d $php_install_path/mm ]; then
 	echo 'installing mm-'$mm'...'
 	if [ ! -f $base_path/mm-$mm.tar.gz ]; then
 	echo 'mm-'$mm'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/mm-$mm.tar.gz http://install.ruanzhijun.cn/mm-$mm.tar.gz || exit
+		wget -O $base_path/mm-$mm.tar.gz https://install.ruanzhijun.cn/mm-$mm.tar.gz || exit
 		echo 'download mm-'$mm'.tar.gz finished...'
 	fi
 	tar zxvf $base_path/mm-$mm.tar.gz -C $install_path || exit
@@ -227,7 +227,7 @@ fi
 if [ ! -d $php_install_path/libpng ]; then
 	libpng='1.6.28'
 	if [ ! -f $base_path/libpng-$libpng.tar.gz ]; then
-		wget -O $base_path/libpng-$libpng.tar.gz http://install.ruanzhijun.cn/libpng-$libpng.tar.gz || exit
+		wget -O $base_path/libpng-$libpng.tar.gz https://install.ruanzhijun.cn/libpng-$libpng.tar.gz || exit
 	fi
 	tar zxvf $base_path/libpng-$libpng.tar.gz -C $install_path || exit
 	cd $install_path/libpng-$libpng
@@ -237,7 +237,7 @@ fi
 # jpeg
 if [ ! -d $php_install_path/jpeg ]; then
 	if [ ! -f $base_path/jpegsrc.tar.gz ]; then
-		wget -O $base_path/jpegsrc.tar.gz http://install.ruanzhijun.cn/jpegsrc.v9b.tar.gz || exit
+		wget -O $base_path/jpegsrc.tar.gz https://install.ruanzhijun.cn/jpegsrc.v9b.tar.gz || exit
 	fi
 	tar zxvf $base_path/jpegsrc.tar.gz -C $install_path || exit
 	cd $install_path/jpeg-9b
@@ -248,7 +248,7 @@ fi
 if [ ! -d $php_install_path/freetype ]; then
 	freetype='freetype-2.7.1'
 	if [ ! -f $base_path/$freetype.tar.gz ]; then
-		wget -O $base_path/$freetype.tar.gz http://install.ruanzhijun.cn/$freetype.tar.gz || exit
+		wget -O $base_path/$freetype.tar.gz https://install.ruanzhijun.cn/$freetype.tar.gz || exit
 	fi
 	rm -rf $install_path/$freetype
 	tar zxvf $base_path/$freetype.tar.gz -C $install_path || exit
@@ -260,7 +260,7 @@ fi
 echo 'installing php-'$php_version'...'
 if [ ! -f $base_path/php-$php_version.tar.gz ]; then
 	echo 'php-'$php_version'.tar.gz is not exists, system will going to download it...'
-	wget -O $base_path/php-$php_version.tar.gz http://install.ruanzhijun.cn/php-$php_version.tar.gz || exit
+	wget -O $base_path/php-$php_version.tar.gz https://install.ruanzhijun.cn/php-$php_version.tar.gz || exit
 	echo 'download php-'$php_version' finished...'
 fi
 rm -rf $install_path/php-$php_version

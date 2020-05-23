@@ -15,7 +15,7 @@ nsq_install_path='/usr/local'
 nsq_version='nsq-1.0.0-compat.linux-amd64.go1.8'
 rm -rf /usr/bin/nsq*
 if [ ! -f $base_path/nsq.tar.gz ]; then
-	wget -O $base_path/nsq.tar.gz http://install.ruanzhijun.cn/$nsq_version.tar.gz
+	wget -O $base_path/nsq.tar.gz https://install.ruanzhijun.cn/$nsq_version.tar.gz
 fi
 
 tar zxvf $base_path/nsq.tar.gz -C $install_path || exit

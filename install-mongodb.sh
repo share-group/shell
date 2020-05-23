@@ -23,7 +23,7 @@ yum -y install libtool sed gcc gcc-c++ make net-snmp curl net-snmp-devel net-snm
 
 rm -rf $mongodb_install_path/mongodb
 
-wget -O $base_path/mongodb-$mongodb_version.tgz http://install.ruanzhijun.cn/mongodb-linux-x86_64-$mongodb_version.tgz || exit
+wget -O $base_path/mongodb-$mongodb_version.tgz https://install.ruanzhijun.cn/mongodb-linux-x86_64-$mongodb_version.tgz || exit
 tar zxvf $base_path/mongodb-$mongodb_version.tgz -C $mongodb_install_path || exit
 mv $mongodb_install_path/mongodb-linux-x86_64-rhel70-$mongodb_version $mongodb_install_path/mongodb
 rm -rf $mongodb_install_path/mongodb/data

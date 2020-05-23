@@ -1,6 +1,6 @@
 #linux docker
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh
-
+#rpm包下载地址：https://download.docker.com/linux/centos/7/x86_64/stable/Packages/
 #定义本程序的当前目录
 base_path=$(pwd)
 
@@ -10,9 +10,9 @@ mkdir -p $install_path
 
 #安装docker
 yum install -y podman-manpages
-yum install -y http://install.ruanzhijun.cn/containerd.io-1.2.13-3.1.el7.x86_64.rpm
-yum install -y http://install.ruanzhijun.cn/docker-ce-cli-19.03.7-3.el7.x86_64.rpm
-yum install -y http://install.ruanzhijun.cn/docker-ce-19.03.7-3.el7.x86_64.rpm
+yum install -y https://install.ruanzhijun.cn/containerd.io-1.2.13-3.2.el7.x86_64.rpm
+yum install -y https://install.ruanzhijun.cn/docker-ce-cli-19.03.9-3.el7.x86_64.rpm
+yum install -y https://install.ruanzhijun.cn/docker-ce-19.03.9-3.el7.x86_64.rpm
 systemctl restart docker
 docker -v || exit
 docker info || exit
@@ -26,9 +26,9 @@ echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_che
 systemctl daemon-reload && systemctl restart docker
 
 #安装docker-compose
-cd /usr/bin && wget --no-check-certificate --no-cache http://install.ruanzhijun.cn/docker-compose && chmod 777 docker-compose
+cd /usr/bin && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/docker-compose && chmod 777 docker-compose
 docker-compose -v
 
 #开机自启动
-echo 'systemctl start docker' >> /etc/rc.local
+echo 'systemctl start docker' >> /etc/rc.local && chmod 777 /etc/rc.local
 
