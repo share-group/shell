@@ -9,11 +9,11 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #安装docker
-yum install -y podman-manpages
-yum install -y https://install.ruanzhijun.cn/containerd.io-1.2.13-3.2.el7.x86_64.rpm
-yum install -y https://install.ruanzhijun.cn/docker-ce-cli-19.03.9-3.el7.x86_64.rpm
-yum install -y https://install.ruanzhijun.cn/docker-ce-19.03.9-3.el7.x86_64.rpm
-systemctl restart docker
+yum install -y podman-manpages || exit
+yum install -y https://install.ruanzhijun.cn/containerd.io-1.2.13-3.2.el7.x86_64.rpm || exit
+yum install -y https://install.ruanzhijun.cn/docker-ce-cli-19.03.9-3.el7.x86_64.rpm || exit
+yum install -y https://install.ruanzhijun.cn/docker-ce-19.03.9-3.el7.x86_64.rpm || exit
+systemctl restart docker || exit
 docker -v || exit
 docker info || exit
 
@@ -23,10 +23,10 @@ echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_che
 
 #重启docker
 
-systemctl daemon-reload && systemctl restart docker
+systemctl daemon-reload && systemctl restart docker || exit
 
 #安装docker-compose
-cd /usr/bin && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/docker-compose && chmod 777 docker-compose
+cd /usr/bin && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/docker-compose && chmod 777 docker-compose || exit
 docker-compose -v
 
 #开机自启动
