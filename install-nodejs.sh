@@ -1,5 +1,5 @@
 #linux nodejs自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 11.4.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 12.18.2 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ nodejs_version=$1
 nodejs_install_path=$2
 if [ ! $nodejs_version ] || [ ! $nodejs_install_path ]; then
 	echo 'error command!!! you must input nodejs version and install path...'
-	echo 'for example: sh install-nodejs.sh 11.4.0 /usr/local'
+	echo 'for example: sh install-nodejs.sh 12.18.2 /usr/local'
 	exit
 fi
 
@@ -40,7 +40,6 @@ source /etc/profile || exit
 npm --registry https://registry.npm.taobao.org i -g npm
 echo 'node version: '$(node -v)
 echo 'npm version: '$(npm -v)
-echo 'yarn version: '$(yarn -v)
 
 #搭建私有npm
 # http://blog.fens.me/nodejs-cnpm-npm/
