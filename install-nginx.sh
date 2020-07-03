@@ -245,15 +245,6 @@ server {
 	#location /status {
 	#	stub_status		on;
 	#}
-		
-	#nginx 伪静态写法(一定要写在最后)
-	#location ~ .*$ { 
-	#	 rewrite ^/(.*)$ /index.php break;    #目录所有链接都指向index.php
-	#	 fastcgi_pass  127.0.0.1:9000;
-	#	 fastcgi_index index.php;
-	#	 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-	#	 include fastcgi.conf;
-	#}
 }
 ' > $nginx_install_path/nginx/conf/web/80.conf
 
