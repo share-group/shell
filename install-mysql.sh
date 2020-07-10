@@ -21,7 +21,7 @@ mkdir -p $install_path
 yum -y install curl curl-devel zlib-devel openssl-devel perl cpio expat-devel perl-ExtUtils-MakeMaker gettext-devel gcc libc6-dev gcc-c++ pcre-devel libgd2-xpm libgd2-xpm-dev geoip-database libgeoip-dev make libxslt-dev rsync lrzsz bzip2 unzip vim iptables-services httpd-tools ruby ruby-devel rubygems rpm-build bc perl-devel nscd ImageMagick ImageMagick-devel perl-ExtUtils-Embed python-devel gd-devel libxml2 libxml2-dev libpcre3 libpcre3-dev socat perl-CPAN libtool sed net-snmp net-snmp-devel net-snmp-utils ncurses-devel dos2unix texinfo policycoreutils openssh-server openssh-clients postfix bison
 
 #安装cmake
-cmake='cmake-3.13.2'
+cmake='cmake-3.17.3'
 if [ ! -d $mysql_install_path/cmake ]; then
 	echo 'installing '$cmake'...'
 	if [ ! -f $base_path/$cmake.tar.gz ]; then
@@ -32,7 +32,7 @@ if [ ! -d $mysql_install_path/cmake ]; then
 	tar zxvf $base_path/$cmake.tar.gz -C $install_path || exit
 	cd $install_path/$cmake
 	./bootstrap --system-curl --prefix=$mysql_install_path/cmake && make && make install || exit
-	cd /usr/bin && ln -s mysql_install_path/cmake/bin/cmake cmake && chmod 777 cmake
+	cd /usr/bin && ln -s $mysql_install_path/cmake/bin/cmake cmake && chmod 777 cmake
 	echo 'export PATH='$mysql_install_path'/cmake/bin:$PATH' >> ~/.bash_profile
 	source ~/.bash_profile
 fi
