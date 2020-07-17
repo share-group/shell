@@ -211,11 +211,11 @@ if [ ! -f $base_path/ngx_devel_kit.tar.bz2 ]; then
 fi
 tar jxvf $base_path/ngx_devel_kit.tar.bz2 -C $install_path || exit
 
-############# RTMP模块 #############
-if [ ! -f $base_path/nginx-rtmp-module-1.2.1.tar.gz ]; then
-	wget -O $base_path/nginx-rtmp-module-1.2.1.tar.gz https://install.ruanzhijun.cn/nginx-rtmp-module-1.2.1.tar.gz
+############# http-flv模块 #############
+if [ ! -f $base_path/nginx-http-flv-module-1.2.7.tar.gz ]; then
+	wget -O $base_path/nginx-http-flv-module-1.2.7.tar.gz https://install.ruanzhijun.cn/nginx-http-flv-module-1.2.7.tar.gz
 fi
-tar zxvf $base_path/nginx-rtmp-module-1.2.1.tar.gz -C $install_path || exit
+tar zxvf $base_path/nginx-http-flv-module-1.2.7.tar.gz -C $install_path || exit
 
 ############# vts监控模块 #############
 if [ ! -f $base_path/nginx-module-vts-0.1.18.tar.gz ]; then
@@ -246,7 +246,7 @@ cd $install_path/$nginx
 wget -O Enable_BoringSSL_OCSP.patch https://install.ruanzhijun.cn/Enable_BoringSSL_OCSP.patch && patch -p1 < ./Enable_BoringSSL_OCSP.patch
 
 #执行nginx安装
-./auto/configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-http_v3_module --with-cc-opt="-I../boringssl/include" --with-ld-opt="-Ljemalloc -L../boringssl/build/ssl -L../boringssl/build/crypto -Wl,-E -D_GNU_SOURCE" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre-jit --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/nginx-sorted-querystring-module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --add-module=$install_path/redis2-nginx-module --add-module=$install_path/ngx_cache_purge --add-module=$install_path/ngx_devel_kit --add-module=$install_path/nginx-rtmp-module-1.2.1 --add-module=$install_path/nginx-module-vts-0.1.18 --add-module=$install_path/xss-nginx-module-0.06 && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./auto/configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-http_v3_module --with-cc-opt="-I../boringssl/include" --with-ld-opt="-Ljemalloc -L../boringssl/build/ssl -L../boringssl/build/crypto -Wl,-E -D_GNU_SOURCE" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre-jit --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/nginx-sorted-querystring-module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --add-module=$install_path/redis2-nginx-module --add-module=$install_path/ngx_cache_purge --add-module=$install_path/ngx_devel_kit --add-module=$install_path/nginx-http-flv-module-1.2.7 --add-module=$install_path/nginx-module-vts-0.1.18 --add-module=$install_path/xss-nginx-module-0.06 && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
