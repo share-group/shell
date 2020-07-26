@@ -24,7 +24,7 @@ jdk=$java_version
 echo 'installing '$jdk' ...'
 if [ ! -f $base_path/$jdk'_linux-x64_bin.tar.gz' ]; then
 	echo $base_path/$jdk'_linux-x64_bin.tar.gz is not exists, system will going to download it...'
-	wget -O $base_path"/"$jdk"_linux-x64_bin.tar.gz https://install.ruanzhijun.cn/"$jdk"_linux-x64_bin.tar.gz" || exit
+	wget -O $base_path"/"$jdk"_linux-x64_bin.tar.gz" "https://install.ruanzhijun.cn/"$jdk"_linux-x64_bin.tar.gz" || exit
 	echo 'download '$jdk'_linux-x64_bin.tar.gz finished...'
 fi
 tar zxvf $jdk.tar.gz -C $java_install_path
