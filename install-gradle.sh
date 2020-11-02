@@ -22,7 +22,7 @@ mkdir -p $install_path
 sh install-java.sh $gradle_install_path
 
 #下载gradle
-gradle='gradle-5.5'
+gradle='gradle-6.7'
 if [ ! -d $install_path/$gradle ]; then
 	echo 'installing '$gradle' ...'
 	if [ ! -f $base_path/$gradle.zip ]; then
