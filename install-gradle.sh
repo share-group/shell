@@ -19,7 +19,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #首先安装java
-sh install-java.sh $gradle_install_path
+sh install-java.sh jdk-11.0.9 $gradle_install_path
 
 #下载gradle
 gradle='gradle-6.7'

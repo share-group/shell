@@ -9,7 +9,7 @@ java_version=$1
 java_install_path=$2
 if [ ! $java_version ] || [ ! $java_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-java.sh jdk-11.0.7 /usr/local'
+	echo 'for example: sh install-java.sh jdk-11.0.9 /usr/local'
 	exit
 fi
 
