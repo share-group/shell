@@ -1,5 +1,5 @@
 #linux java
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-java.sh && sh install-java.sh /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-java.sh && sh install-java.sh jdk-11.0.9 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -27,7 +27,7 @@ if [ ! -f $base_path/$jdk'_linux-x64_bin.tar.gz' ]; then
 	wget -O $base_path"/"$jdk"_linux-x64_bin.tar.gz" "https://install.ruanzhijun.cn/"$jdk"_linux-x64_bin.tar.gz" || exit
 	echo 'download '$jdk'_linux-x64_bin.tar.gz finished...'
 fi
-tar zxvf $jdk.tar.gz -C $java_install_path
+tar zxvf $jdk'_linux-x64_bin.tar.gz' -C $java_install_path
 
 echo "" >> /etc/profile
 echo "# set Java environment" >> /etc/profile
