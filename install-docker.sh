@@ -11,8 +11,8 @@ mkdir -p $install_path
 #安装docker
 yum install -y podman-manpages || exit
 yum install -y https://install.ruanzhijun.cn/containerd.io-1.2.13-3.2.el7.x86_64.rpm || exit
-yum install -y https://install.ruanzhijun.cn/docker-ce-cli-19.03.9-3.el7.x86_64.rpm || exit
-yum install -y https://install.ruanzhijun.cn/docker-ce-19.03.9-3.el7.x86_64.rpm || exit
+yum install -y https://install.ruanzhijun.cn/docker-ce-cli-20.10.0-3.el7.x86_64.rpm || exit
+yum install -y https://install.ruanzhijun.cn/docker-ce-20.10.0-3.el7.x86_64.rpm || exit
 systemctl restart docker || exit
 docker -v || exit
 docker info || exit
