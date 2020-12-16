@@ -1,6 +1,5 @@
 #linux docker
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh
-#rpm包下载地址：https://download.docker.com/linux/centos/8/x86_64/stable/Packages/
 #定义本程序的当前目录
 base_path=$(pwd)
 
@@ -8,12 +7,13 @@ install_path='/install'
 rm -rf $install_path
 mkdir -p $install_path
 
+#更新yum源
+yum install -y yum-utils || exit
+yum-config-manager --add-repo https://install.ruanzhijun.cn/docker-ce.repo || exit
+dnf makecache || exit
+
 #安装docker
-yum install -y podman-manpages || exit
-yum install -y https://install.ruanzhijun.cn/containerd.io-1.4.3-3.1.el8.x86_64.rpm || exit
-yum install -y https://install.ruanzhijun.cn/docker-ce-rootless-extras-20.10.0-3.el8.x86_64.rpm || exit
-yum install -y https://install.ruanzhijun.cn/docker-ce-cli-20.10.0-3.el8.x86_64.rpm || exit
-yum install -y https://install.ruanzhijun.cn/docker-ce-20.10.0-3.el8.x86_64.rpm || exit
+yum install -y --allowerasing docker-ce docker-ce-cli containerd.io || exit
 systemctl restart docker || exit
 docker -v || exit
 docker info || exit
@@ -32,4 +32,3 @@ docker-compose -v
 
 #开机自启动
 echo 'systemctl start docker' >> /etc/rc.local && chmod 777 /etc/rc.local
-
