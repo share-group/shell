@@ -73,32 +73,32 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-1.1.1g'
+openssl='openssl-1.1.1j'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 	echo 'download '$openssl' finished...'
 fi
-# if [ ! -d $nginx_install_path/openssl ]; then
-	# echo 'installing '$openssl' ...'
-	# if [ ! -f $base_path/$openssl.tar.gz ]; then
-		# echo $openssl'.tar.gz is not exists, system will going to download it...'
-		# wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
-		# echo 'download '$openssl' finished...'
-	# fi
-	# tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
-	# cd $install_path/$openssl
-	# rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make -j $worker_processes && make install || exit
-	# rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
-	# rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
-	# rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
-	# rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s $nginx_install_path/openssl/lib/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
-	# rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s /usr/lib64/libcrypto.so.1.1.1 /usr/lib64/libcrypto.so.1.1
-	# echo $nginx_install_path"/openssl/lib" >> /etc/ld.so.conf
-	# ldconfig -v
-	# yes|cp $nginx_install_path/openssl/bin/* /usr/bin/
-	# echo $openssl' install finished...'
-# fi
+if [ ! -d $nginx_install_path/openssl ]; then
+	echo 'installing '$openssl' ...'
+	if [ ! -f $base_path/$openssl.tar.gz ]; then
+		echo $openssl'.tar.gz is not exists, system will going to download it...'
+		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		echo 'download '$openssl' finished...'
+	fi
+	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+	cd $install_path/$openssl
+	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make -j $worker_processes && make install || exit
+	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
+	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
+	rm -rf /usr/lib64/libssl.so.1.1 && ln -s $nginx_install_path/openssl/lib/libssl.so.1.1 /usr/lib64/libssl.so.1.1
+	rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s $nginx_install_path/openssl/lib/libcrypto.so.1.1 /usr/lib64/libcrypto.so.1.1
+	rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s /usr/lib64/libcrypto.so.1.1.1 /usr/lib64/libcrypto.so.1.1
+	echo $nginx_install_path"/openssl/lib" >> /etc/ld.so.conf
+	ldconfig -v
+	yes|cp $nginx_install_path/openssl/bin/* /usr/bin/
+	echo $openssl' install finished...'
+fi
 
 #再解压一次给nginx编译用
 rm -rf $install_path/$openssl
@@ -156,8 +156,6 @@ http {
 	keepalive_timeout 60;
 	client_header_buffer_size 32k;
 	client_max_body_size 200m;
-	
-	add_header X-Real-IP $remote_addr;
 	
 	fastcgi_connect_timeout 600;
 	fastcgi_send_timeout 600;
@@ -237,8 +235,8 @@ server {
 	
 	#需要用户名密码访问
 	#location / {
-	#		auth_basic "Authorized users only";
-	#		auth_basic_user_file /usr/local/tengine/conf/web/htpasswd;  #密码文件格式：baidu.com:/XJt5jAl/dKTI
+	#	auth_basic "Authorized users only";
+	#	auth_basic_user_file /usr/local/tengine/conf/web/htpasswd;  #密码文件格式：baidu.com:/XJt5jAl/dKTI
 	#}
 	
 	#查看nginx状态
