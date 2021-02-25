@@ -96,13 +96,12 @@ if [ ! -d $nginx_install_path/openssl ]; then
 	rm -rf /usr/lib64/libcrypto.so.1.1 && ln -s /usr/lib64/libcrypto.so.1.1.1 /usr/lib64/libcrypto.so.1.1
 	echo $nginx_install_path"/openssl/lib" >> /etc/ld.so.conf
 	ldconfig -v
-	yes|cp $nginx_install_path/openssl/bin/* /usr/bin/
 	echo $openssl' install finished...'
 fi
 
 #再解压一次给nginx编译用
 rm -rf $install_path/$openssl
-tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+cd $base_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 
 #安装libatomic
 libatomic='libatomic_ops-1.1'
