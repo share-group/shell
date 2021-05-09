@@ -1,5 +1,5 @@
 #linux java
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-java.sh && sh install-java.sh jdk-11.0.9 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-java.sh && sh install-java.sh jdk-11.0.9 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)

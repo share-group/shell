@@ -1,5 +1,5 @@
 #linux redis自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-redis.sh && sh install-redis.sh 3.2.6 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-redis.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/docker/install-redis.sh && sh install-redis.sh 3.2.6 /usr/local
 
 function cluster(){ 
 	redis_version=$1;
@@ -31,7 +31,7 @@ mkdir -p $redis_install_path/redis/bin
 
 #下载redis-trib.rb
 cd $redis_install_path/redis/bin
-wget --no-cache https://raw.githubusercontent.com/antirez/redis/$redis_version/src/redis-trib.rb
+wget --no-cache https://raw.staticdn.net/antirez/redis/$redis_version/src/redis-trib.rb
 rm -rf /usr/bin/redis-trib.rb
 ln -s $redis_install_path/redis/bin/redis-trib.rb /usr/bin/redis-trib.rb
 chmod 777 /usr/bin/redis-trib.rb

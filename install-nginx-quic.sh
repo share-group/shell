@@ -2,10 +2,10 @@
 base_path=$(pwd)  
 source /etc/profile || exit
 
-#配置raw.githubusercontent.com的host，使得国内服务器可以下载github的文件
-hosts=$(cat /etc/hosts | grep 'raw.githubusercontent.com')
+#配置raw.staticdn.net的host，使得国内服务器可以下载github的文件
+hosts=$(cat /etc/hosts | grep 'raw.staticdn.net')
 if [ ! -n "$hosts" ]; then
-	echo '199.232.28.133  raw.githubusercontent.com' >> /etc/hosts
+	echo '199.232.28.133  raw.staticdn.net' >> /etc/hosts
 fi
 
 #处理外部参数
@@ -425,9 +425,9 @@ $(source /etc/profile)
 #复制demo https证书
 mkdir -p /letsencrypt/letsencrypt/
 cd /letsencrypt/letsencrypt/
-wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.crt
-wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.key
-wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.pem
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.crt
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.key
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
 #启动nginx
 yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/

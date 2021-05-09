@@ -1,5 +1,5 @@
 #linux gitlab自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-gitlab.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-gitlab.sh && sh install-gitlab.sh /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-gitlab.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/docker/install-gitlab.sh && sh install-gitlab.sh /usr/local
 
 #处理外部参数
 gitlab_install_path=$1

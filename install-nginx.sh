@@ -1,5 +1,5 @@
 #linux nginx自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.20.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.20.0 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)  
@@ -304,9 +304,9 @@ $(source /etc/profile)
 #复制demo https证书
 mkdir -p /letsencrypt/letsencrypt/
 cd /letsencrypt/letsencrypt/
-wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.crt
-wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.key
-wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.pem
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.crt
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.key
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
 #启动nginx
 yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/

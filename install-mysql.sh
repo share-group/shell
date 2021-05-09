@@ -1,5 +1,5 @@
 #linux mysql自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-mysql.sh && sh install-mysql.sh /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mysql.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-mysql.sh && sh install-mysql.sh /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
