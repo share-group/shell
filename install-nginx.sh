@@ -73,7 +73,7 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-1.1.1j'
+openssl='openssl-1.1.1k'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
