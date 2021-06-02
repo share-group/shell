@@ -125,7 +125,7 @@ echo 'mongod --config '$mongodb_install_path'/mongodb/mongodb.conf &' >> /etc/rc
 source /etc/rc.local
 
 #创建超级管理员
-#db.createUser({user: "root",pwd: "xxxxxxxxxxxxx",roles: [{role:"dbAdminAnyDatabase",db:"admin"},{ role: "userAdminAnyDatabase",db:"admin"},{role:"readAnyDatabase",db:"admin"},{role:"readWriteAnyDatabase",db:"admin"}]})
+#db.createUser({user: "root",pwd: "xxxxxxxxxxxx",roles: [{role:"root",db:"admin"}]})
 
 #单个数据库读写
 #db.createUser({user:"root",pwd: "xxxxxxxxxxxxxxxx",roles:[{role:"readWrite",db:"xxxxxxxx"}]})
