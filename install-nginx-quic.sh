@@ -13,7 +13,7 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx-quic.sh quic /usr/local'
+	echo 'for example: sh install-nginx-quic.sh quic-quic /usr/local'
 	exit
 fi
 
@@ -88,7 +88,7 @@ if [ ! -n "$is_install_zlib" ]; then
 fi
 
 #安装cmake
-cmake='cmake-3.17.3'
+cmake='cmake-3.22.1'
 if [ ! -d $nginx_install_path/cmake ]; then
 	echo 'installing '$cmake'...'
 	if [ ! -f $base_path/$cmake.tar.gz ]; then
@@ -103,7 +103,7 @@ if [ ! -d $nginx_install_path/cmake ]; then
 fi
 
 #下载pcre
-pcre='pcre-8.44'
+pcre='pcre-8.45'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...' 
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -233,12 +233,12 @@ tar zxvf $base_path/xss-nginx-module-0.06.tar.gz -C $install_path || exit
 nginx='nginx-'$nginx_version
 echo 'installing '$nginx' ...'
 if [ ! -d $nginx_install_path/nginx ]; then
-	if [ ! -f $base_path/$nginx.tar.bz2 ]; then
+	if [ ! -f $base_path/$nginx.tar.gz ]; then
 		echo $nginx'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$nginx.tar.bz2 https://install.ruanzhijun.cn/$nginx.tar.bz2 || exit
+		wget -O $base_path/$nginx.tar.gz https://install.ruanzhijun.cn/$nginx.tar.gz || exit
 		echo 'download '$nginx' finished...'
 	fi
-	tar jxvf $base_path/$nginx.tar.bz2 -C $install_path || exit
+	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
 
