@@ -1,5 +1,5 @@
 #linux nginx自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.20.2 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.22.0 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)  
@@ -9,12 +9,12 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.20.2 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.22.0 /usr/local'
 	exit
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
-yum -y install curl wget gcc gcc-c++ make rsync lrzsz
+yum -y install wget gcc gcc-c++ make perl-core
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -23,7 +23,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载zlib
-zlib='zlib-1.2.11'
+zlib='zlib-1.2.12'
 if [ ! -d $install_path/$zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
@@ -47,7 +47,7 @@ if [ ! -d $install_path/$zlib ]; then
 fi
 
 #下载pcre
-pcre='pcre-8.45'
+pcre='pcre2-10.37'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...' 
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -73,13 +73,34 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.0.1'
+openssl='openssl-3.0.4'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 	echo 'download '$openssl' finished...'
 fi
+if [ ! -d $nginx_install_path/openssl ]; then
+	echo 'installing '$openssl' ...'
+	if [ ! -f $base_path/$openssl.tar.gz ]; then
+		echo $openssl'.tar.gz is not exists, system will going to download it...'
+		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		echo 'download '$openssl' finished...'
+	fi
+	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+	cd $install_path/$openssl
+	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make update && make -j $worker_processes && make install || exit
+	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
+	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
+	rm -rf /usr/lib/libssl.so && ln -s $nginx_install_path/openssl/lib64/libssl.so /usr/lib/libssl.so
+	rm -rf /usr/lib/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib/libcrypto.so
+	rm -rf /usr/lib64/libssl.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libssl.so
+	rm -rf /usr/lib64/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libcrypto.so
+	echo $nginx_install_path"/openssl/lib64" >> /etc/ld.so.conf
+	ldconfig -v
+	echo $openssl' install finished...'
+fi
 
+#再解压一次给nginx编译用
 rm -rf $install_path/$openssl
 cd $base_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 
@@ -95,6 +116,35 @@ if [ ! -d $install_path/$libatomic ]; then
 	tar zxvf $base_path/$libatomic.tar.gz -C $install_path || exit
 fi
 
+#安装libmaxminddb
+geoip='libmaxminddb-1.6.0'
+if [ ! -d $install_path/$geoip ]; then
+	echo 'installing '$geoip' ...'
+	if [ ! -f $base_path/$geoip.tar.gz ]; then
+		echo $geoip'.tar.gz is not exists, system will going to download it...'
+		wget -O $base_path/$geoip.tar.gz https://install.ruanzhijun.cn/$geoip.tar.gz || exit
+		echo 'download '$geoip' finished...'
+	fi
+	tar zxvf $base_path/$geoip.tar.gz -C $install_path || exit
+	cd $install_path/$geoip
+	./configure && make -j $worker_processes && make install || exit
+fi
+
+########## 增加nginx第三方模块：https://www.nginx.com/resources/wiki/modules/index.html ##########
+
+#geoip2：https://github.com/leev/ngx_http_geoip2_module
+wget -O $install_path/ngx_http_geoip2_module.zip https://install.ruanzhijun.cn/ngx_http_geoip2_module.zip || exit
+cd $install_path && unzip ngx_http_geoip2_module.zip && mv ngx_http_geoip2_module-master ngx_http_geoip2_module || exit
+
+#brotli压缩：https://github.com/google/ngx_brotli
+wget -O $install_path/ngx_brotli.zip https://install.ruanzhijun.cn/ngx_brotli.zip || exit
+cd $install_path && unzip ngx_brotli.zip && mv ngx_brotli-master ngx_brotli || exit
+cd $install_path/ngx_brotli/deps && rm -rf brotli && wget https://install.ruanzhijun.cn/brotli.zip && unzip brotli.zip && mv brotli-master brotli || exit
+
+#文件合并：https://github.com/alibaba/nginx-http-concat
+wget -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
+cd $install_path && unzip nginx-http-concat.zip && mv nginx-http-concat-master nginx-http-concat || exit
+
 #安装nginx
 nginx='nginx-'$nginx_version
 echo 'installing '$nginx' ...'
@@ -107,7 +157,7 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -163,78 +213,21 @@ mkdir $nginx_install_path/nginx/conf/web/
 echo 'create nginx.conf finished...'
 
 #创建网站文件存放目录
-echo 'create www_root...'
+echo 'create "www" root...'
 web_root='www'
 mv $nginx_install_path/nginx/html $nginx_install_path/nginx/$web_root
-echo "<?php phpinfo(); ?>" > $nginx_install_path/nginx/$web_root/phpinfo.php || exit
 
-#创建一个80端口的配置文件(作为demo)
-echo 'create a demo conf , 80.conf...'
-echo '
-#80
+#创建一个demo配置文件
+echo 'create a demo conf , demo.conf...'
+echo "
 server {
 	listen 80;
-	server_name _;
-	root '$web_root';
-	#autoindex on; #无index时是否显示文件列表
-	index index.html index.php;
-
-	location ~ \.php$ {
-		fastcgi_pass 127.0.0.1:9000;
-		fastcgi_index index.php;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		include fastcgi.conf;
-	}
-	
-	#允许所有method跨域
-	#location ~ .*$ {
-	#	if ($request_method = "OPTIONS") {
-	#		add_header Access-Control-Allow-Origin "*";
-	#		add_header Access-Control-Allow-Credentials "true";
-	#		add_header Access-Control-Allow-Methods "GET,POST,OPTIONS,PUT,DELETE,PATCH";
-	#		add_header Access-Control-Allow-Headers "DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type";
-	#		return 204;
-	#	}
-	#}
-		
-	#缓存网站素材
-	#location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|js|css)$ {
-	#	expires 30d;
-	#}
-		
-	#如果使用了伪静态，则可以保护这些文件的正常访问
-	#location ~ /(images|css|js|swf|upload)/.*$ {
-	#
-	#}
-		
-	#禁止某些文件被访问
-	#location ~ .*\.(txt|ico)$ {
-	#	break;
-	#}
-	
-	#需要用户名密码访问
-	#location / {
-	#	auth_basic "Authorized users only";
-	#	auth_basic_user_file /usr/local/tengine/conf/web/htpasswd;  #密码文件格式：baidu.com:/XJt5jAl/dKTI
-	#}
-	
-	#查看nginx状态
-	#location /status {
-	#	stub_status		on;
-	#}
+	rewrite ^/(.*) https://$host/$1 permanent;
 }
-' > $nginx_install_path/nginx/conf/web/80.conf
 
-#创建一个https的配置文件
-echo 'create 443.conf...'
-
-#首先自己生成证书，可以实现https，但是不受浏览器信任
-echo "
-#https
 server {
 	listen 443 ssl http2;
 	listen [::]:443 ssl http2;
-	server_name _;
 	root  "$web_root";
 	index index.html index.php;
 	
@@ -274,7 +267,7 @@ server {
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
 	add_header Strict-Transport-Security 'max-age=3153600000; includeSubDomains; preload;';
-}" > $nginx_install_path/nginx/conf/web/443.conf
+}" > $nginx_install_path/nginx/conf/web/demo.conf
 
 #修改环境变量
 echo 'modify /etc/profile...'
