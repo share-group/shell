@@ -45,7 +45,7 @@ if [ ! -d $nginx_install_path/libunwind ]; then
 fi 
 
 #安装jemalloc
-jemalloc='jemalloc-5.2.1'
+jemalloc='jemalloc-5.3.0'
 if [ ! -d $nginx_install_path/jemalloc ]; then
 	if [ ! -d $install_path/$jemalloc ]; then
 		echo 'installing '$jemalloc' ...'

@@ -60,7 +60,7 @@ fi
 
 #安装libiconv
 if [ ! -d $nginx_install_path/libiconv ]; then
-	libiconv='libiconv-1.16'
+	libiconv='libiconv-1.17'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
 		wget -O $base_path/$libiconv.tar.gz https://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
@@ -71,6 +71,24 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 	./configure --prefix=$nginx_install_path/libiconv -enable-shared --host=arm-linux && make -j $worker_processes && make install || exit
 	yes|cp $nginx_install_path/libiconv/bin/* /usr/bin/
 fi
+
+#安装jemalloc
+jemalloc='jemalloc-5.3.0'
+if [ ! -d $nginx_install_path/jemalloc ]; then
+	if [ ! -d $install_path/$jemalloc ]; then
+		echo 'installing '$jemalloc' ...'
+		if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
+			echo $jemalloc'.tar.bz2 is not exists, system will going to download it...'
+			wget -O $base_path/$jemalloc.tar.bz2 https://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
+			echo 'download '$jemalloc' finished...'
+		fi
+		tar jxvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
+		cd $install_path/$jemalloc
+		./configure --prefix=$nginx_install_path/jemalloc && make -j $worker_processes && make install || exit
+		echo $nginx_install_path"/jemalloc/lib" >> /etc/ld.so.conf || exit
+		ldconfig
+	fi 
+fi 
 
 # 安装OpenSSL
 openssl='openssl-3.0.4'
@@ -157,7 +175,7 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-http_stub_status_module --with-ld-opt="-Wl,-E" --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
