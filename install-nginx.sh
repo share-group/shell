@@ -212,16 +212,36 @@ http {
 	fastcgi_busy_buffers_size 128k;
 	fastcgi_temp_file_write_size 128k;
 
+	#开启brotli压缩
+	brotli on;
+	brotli_min_length 1
+	brotli_buffers 16 8k;
+	brotli_comp_level 6;
+	brotli_static always;
+	brotli_types *;
+	
 	#开启gzip压缩
-	gzip on;
-	gzip_min_length 1k;
-	gzip_buffers 4 16k;
-	gzip_comp_level 9;
-	gzip_types text/plain application/json application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png image/svg+xml image/x-icon;
-	gzip_vary off;	
+	#gzip on;
+	#gzip_min_length 1k;
+	#gzip_buffers 16 8k;
+	#gzip_comp_level 4;
+	#gzip_types *;
+	#gzip_vary off;
 
 	#不显示nginx的版本号
 	server_tokens off;    
+	
+	#GeoIP配置
+	geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
+		auto_reload 5m;
+		\$geoip2_metadata_country_build metadata build_epoch;
+		\$geoip2_data_country_code default=US source = \$variable_with_ip country iso_code;
+		\$geoip2_data_country_name country names en;
+	}
+	
+	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+		\$geoip2_data_city_name default = London city names en;
+    }
 	   
 	include "$nginx_install_path"/nginx/conf/web/*.conf;
 }
@@ -239,7 +259,8 @@ mv $nginx_install_path/nginx/html $nginx_install_path/nginx/$web_root
 echo 'create a demo conf , demo.conf...'
 echo "
 server {
-	listen 80;
+	listen 80 http2;
+	listen [::]:80 http2;
 	rewrite ^/(.*) https://\$host/\$1 permanent;
 }
 
@@ -298,6 +319,13 @@ cd /letsencrypt/letsencrypt/
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.crt
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.key
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
+
+#下载GeoIp数据库
+geoip_version='20220705'
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-City_$geoip_version/GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb || exit
 
 #启动nginx
 yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/
