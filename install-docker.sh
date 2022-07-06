@@ -9,7 +9,7 @@ mkdir -p $install_path
 
 #更新yum源
 yum install -y yum-utils || exit
-yum-config-manager --add-repo https://install.ruanzhijun.cn/docker-ce.repo || exit
+yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo || exit
 dnf makecache || exit
 
 #安装docker
