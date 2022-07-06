@@ -222,7 +222,7 @@ echo 'create a demo conf , demo.conf...'
 echo "
 server {
 	listen 80;
-	rewrite ^/(.*) https://$host/$1 permanent;
+	rewrite ^/(.*) https://\$host/\$1 permanent;
 }
 
 server {
