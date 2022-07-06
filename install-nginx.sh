@@ -41,7 +41,7 @@ if [ ! -d $install_path/$zlib ]; then
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.a libz.a
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so libz.so
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1 libz.so.1
-	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.2.11 libz.so.1.2.11
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.2.12 libz.so.1.2.12
 	echo $nginx_install_path"/zlib/lib" >> /etc/ld.so.conf
 	ldconfig
 fi
