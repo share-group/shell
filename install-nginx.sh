@@ -214,7 +214,7 @@ http {
 
 	#开启brotli压缩
 	brotli on;
-	brotli_min_length 1
+	brotli_min_length 1;
 	brotli_buffers 16 8k;
 	brotli_comp_level 6;
 	brotli_static always;
