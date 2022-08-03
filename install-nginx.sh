@@ -91,7 +91,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi 
 
 # 安装OpenSSL
-openssl='openssl-3.0.4'
+openssl='openssl-3.0.5'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
