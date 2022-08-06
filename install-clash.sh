@@ -53,7 +53,7 @@ echo 'WantedBy=multi-user.target' >> /etc/systemd/system/clash.service
 systemctl daemon-reload && systemctl enable clash && systemctl start clash && systemctl status clash
 
 #测试vpn是否成功
-echo '正在测试 clash 是否安装成功...' && sleep 5 && curl -x http://127.0.0.1:7890 --connect-timeout 5 -m 5 https://www.google.com || (echo 'clash 安装失败...' && exit) && echo 'clash 安装成功...'
+echo '正在测试 clash 是否安装成功...' && sleep 5 && curl -x http://127.0.0.1:7890 --connect-timeout 5 -m 5 https://www.google.com || (echo 'clash 安装失败...' && exit 1) && echo 'clash 安装成功...'
 
 #开机自启动
 echo 'systemctl start clash' >> /etc/rc.d/rc.local
