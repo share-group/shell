@@ -35,12 +35,26 @@ rm -rf $clash_install_path/clash
 mkdir -p $clash_install_path/clash/bin
 cd $clash_install_path/clash/bin && gzip -cd $base_path/$clash > clash && chmod 777 clash || exit
 cd /usr/bin && ln -s $clash_install_path/clash/bin/clash clash && chmod 777 clash || exit
+clash -v
 
 #下载最新的国家ip数据库和配置文件
 mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget -O config.yaml https://install.ruanzhijun.cn/config.yml && wget -O Country.mmdb https://install.ruanzhijun.cn/GeoLite2-Country.mmdb || exit
-clash -v && clash
+
+#加入系统服务
+echo '[Unit]' > /etc/systemd/system/clash.service
+echo 'Description=clash' >> /etc/systemd/system/clash.service
+echo '[Service]' >> /etc/systemd/system/clash.service
+echo 'OOMScoreAdjust=-1000' >> /etc/systemd/system/clash.service
+echo 'ExecStart=/usr/local/clash/bin/clash -d /root/.config/clash' >> /etc/systemd/system/clash.service
+echo 'Restart=on-failure' >> /etc/systemd/system/clash.service
+echo 'RestartSec=5' >> /etc/systemd/system/clash.service
+echo '[Install]' >> /etc/systemd/system/clash.service
+echo 'WantedBy=multi-user.target' >> /etc/systemd/system/clash.service
+systemctl daemon-reload && systemctl enable clash && systemctl start clash && systemctl status clash
+
+#测试vpn是否成功
+echo '正在测试 clash 是否安装成功...' && sleep 5 && curl -x http://127.0.0.1:7890 --connect-timeout 5 -m 5 https://www.google.com || (echo 'clash 安装失败...' && exit) && echo 'clash 安装成功...'
 
 #开机自启动
-echo '' >> /etc/rc.d/rc.local
-echo 'clash' >> /etc/rc.d/rc.local
+echo 'systemctl start clash' >> /etc/rc.d/rc.local
 $(source /etc/rc.d/rc.local)
