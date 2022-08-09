@@ -1,8 +1,8 @@
-#linux nginx自动安装程序 
+#linux nginx自动安装程序
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.22.0 /usr/local
- 
+
 #定义本程序的当前目录
-base_path=$(pwd)  
+base_path=$(pwd)
 
 #处理外部参数
 nginx_version=$1
@@ -49,14 +49,14 @@ fi
 #下载pcre
 pcre='pcre2-10.37'
 if [ ! -d $install_path/$pcre ]; then
-	echo 'installing '$pcre' ...' 
+	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
 		echo $pcre'.tar.gz is not exists, system will going to download it...'
 		wget -O $base_path/$pcre.tar.gz https://install.ruanzhijun.cn/$pcre.tar.gz || exit
 		echo 'download '$pcre' finished...'
 	fi
 	tar zxvf $base_path/$pcre.tar.gz -C $install_path || exit
-fi 
+fi
 
 #安装libiconv
 if [ ! -d $nginx_install_path/libiconv ]; then
@@ -87,8 +87,8 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 		./configure --prefix=$nginx_install_path/jemalloc && make -j $worker_processes && make install || exit
 		echo $nginx_install_path"/jemalloc/lib" >> /etc/ld.so.conf || exit
 		ldconfig
-	fi 
-fi 
+	fi
+fi
 
 # 安装OpenSSL
 openssl='openssl-3.0.5'
@@ -203,7 +203,7 @@ http {
 	keepalive_timeout 60;
 	client_header_buffer_size 32k;
 	client_max_body_size 200m;
-	
+
 	fastcgi_connect_timeout 600;
 	fastcgi_send_timeout 600;
 	fastcgi_read_timeout 600;
@@ -219,30 +219,24 @@ http {
 	brotli_comp_level 6;
 	brotli_static always;
 	brotli_types *;
-	
-	#开启gzip压缩
-	#gzip on;
-	#gzip_min_length 1k;
-	#gzip_buffers 16 8k;
-	#gzip_comp_level 4;
-	#gzip_types *;
-	#gzip_vary off;
 
 	#不显示nginx的版本号
-	server_tokens off;    
-	
+	server_tokens off;
+
 	#GeoIP配置
-	geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
-		auto_reload 5m;
-		\$geoip2_metadata_country_build metadata build_epoch;
-		\$geoip2_data_country_code default=US source = \$variable_with_ip country iso_code;
-		\$geoip2_data_country_name country names en;
-	}
-	
-	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
-		\$geoip2_data_city_name default = London city names en;
-    }
-	   
+  geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
+    auto_reload 5m;
+    \$geoip2_country_code source = \$remote_addr country iso_code;
+    \$geoip2_country_name_en source = \$remote_addr country names en;
+    \$geoip2_country_name_cn source = \$remote_addr country names zh-CN;
+  }
+
+  geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+    \$geoip2_city_name_en source = \$remote_addr city names en;
+    \$geoip2_city_name_cn source = \$remote_addr city names zh-CN;
+    \$geoip2_data_city_code source = \$remote_addr city geoname_id;
+  }
+
 	include "$nginx_install_path"/nginx/conf/web/*.conf;
 }
 " > $nginx_install_path/nginx/conf/nginx.conf || exit
@@ -269,7 +263,7 @@ server {
 	listen [::]:443 ssl http2;
 	root  "$web_root";
 	index index.html index.php;
-	
+
 	ssl_certificate /letsencrypt/letsencrypt/demo.crt;
 	ssl_certificate_key /letsencrypt/letsencrypt/demo.key;
 	ssl_ciphers 	\"TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA\";
@@ -279,23 +273,23 @@ server {
 	ssl_early_data on;
 	ssl_session_cache shared:SSL:10m;
 	ssl_ecdh_curve secp384r1;
-	
+
 	ssl_stapling on;
 	ssl_stapling_verify on;
 	resolver 8.8.4.4 8.8.8.8 valid=300s;
 	resolver_timeout 10s;
-	
+
 	#强制忽略缓存
 	add_header Cache-Control no-store,no-cache,must-revalidate,max-age=0;
-	
+
 	#记录客户端真实ip
 	proxy_set_header X-Real-IP \$remote_addr;
 	proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-	
+
 	#隐藏某些关键的header
 	proxy_hide_header X-Powered-By;
 	proxy_hide_header ETag;
-	
+
 	#允许跨域
 	add_header Access-Control-Allow-Origin '*';
 	add_header Access-Control-Allow-Credentials 'true';
