@@ -151,16 +151,16 @@ fi
 ########## 增加nginx第三方模块：https://www.nginx.com/resources/wiki/modules/index.html ##########
 
 #geoip2：https://github.com/leev/ngx_http_geoip2_module
-wget -O $install_path/ngx_http_geoip2_module.zip https://install.ruanzhijun.cn/ngx_http_geoip2_module.zip || exit
+wget --no-check-certificate --no-cache -O $install_path/ngx_http_geoip2_module.zip https://install.ruanzhijun.cn/ngx_http_geoip2_module.zip || exit
 cd $install_path && unzip ngx_http_geoip2_module.zip && mv ngx_http_geoip2_module-master ngx_http_geoip2_module || exit
 
 #brotli压缩：https://github.com/google/ngx_brotli
-wget -O $install_path/ngx_brotli.zip https://install.ruanzhijun.cn/ngx_brotli.zip || exit
+wget --no-check-certificate --no-cache -O $install_path/ngx_brotli.zip https://install.ruanzhijun.cn/ngx_brotli.zip || exit
 cd $install_path && unzip ngx_brotli.zip && mv ngx_brotli-master ngx_brotli || exit
 cd $install_path/ngx_brotli/deps && rm -rf brotli && wget https://install.ruanzhijun.cn/brotli.zip && unzip brotli.zip && mv brotli-master brotli || exit
 
 #文件合并：https://github.com/alibaba/nginx-http-concat
-wget -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
+wget --no-check-certificate --no-cache -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
 cd $install_path && unzip nginx-http-concat.zip && mv nginx-http-concat-master nginx-http-concat || exit
 
 #安装nginx
