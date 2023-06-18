@@ -315,7 +315,7 @@ wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shel
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
 #下载GeoIp数据库
-geoip_version='20220705'
+geoip_version='20230616'
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
 mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
