@@ -34,11 +34,13 @@ fi
 rm -rf $clash_install_path/clash
 mkdir -p $clash_install_path/clash/bin
 cd $clash_install_path/clash/bin && gzip -cd $base_path/$clash > clash && chmod 777 clash || exit
-cd /usr/bin && ln -s $clash_install_path/clash/bin/clash clash && chmod 777 clash || exit
+cd /usr/bin && rm -rf clash && ln -s $clash_install_path/clash/bin/clash clash && chmod 777 clash || exit
 clash -v
 
-#下载最新的国家ip数据库和配置文件
-mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget -O config.yaml https://install.ruanzhijun.cn/config.yml && wget -O Country.mmdb https://install.ruanzhijun.cn/GeoLite2-Country.mmdb || exit
+#下载GeoIp数据库
+geoip_version='20230616'
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
+mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget -O config.yaml https://install.ruanzhijun.cn/config.yml && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb ./Country.mmdb || exit
 
 #加入系统服务
 echo '[Unit]' > /etc/systemd/system/clash.service
@@ -51,6 +53,9 @@ echo 'RestartSec=5' >> /etc/systemd/system/clash.service
 echo '[Install]' >> /etc/systemd/system/clash.service
 echo 'WantedBy=multi-user.target' >> /etc/systemd/system/clash.service
 systemctl daemon-reload && systemctl enable clash && systemctl start clash && systemctl status clash
+
+#安装图形界面
+#https://github.com/Dreamacro/clash-dashboard
 
 #测试vpn是否成功
 echo '正在测试 clash 是否安装成功...' && sleep 5 && curl -x http://127.0.0.1:7890 --connect-timeout 5 -m 5 https://www.google.com || (echo 'clash 安装失败...' && exit 1) && echo 'clash 安装成功...'

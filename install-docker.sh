@@ -18,17 +18,14 @@ systemctl restart docker || exit
 docker -v || exit
 docker info || exit
 
-#解决docker日志过大的问题
+#配置加速器、解决docker日志过大的问题
 mkdir -p /etc/docker
-echo '{"storage-driver":"overlay2","storage-opts":["overlay2.override_kernel_check=true"],"registry-mirrors":["https://1nj0zren.mirror.aliyuncs.com"],"log-driver":"json-file","log-opts":{"max-size":"1m","max-file":"1"}}' > /etc/docker/daemon.json
-
-#重启docker
-
-systemctl daemon-reload && systemctl restart docker || exit
+echo '{"storage-driver":"overlay2","registry-mirrors": ["https://8ci56u67.mirror.aliyuncs.com"],"log-driver":"json-file","log-opts":{"max-size":"1m","max-file":"1"}}' > /etc/docker/daemon.json || exit
+systemctl daemon-reload && systemctl restart docker && docker info || exit
 
 #安装docker-compose
 cd /usr/bin && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/docker-compose && chmod 777 docker-compose || exit
 docker-compose -v
 
 #开机自启动
-echo 'systemctl start docker' >> /etc/rc.local && chmod 777 /etc/rc.local
+echo 'systemctl start docker' >> /etc/rc.local && chmod 777 /etc/rc.local || exit
