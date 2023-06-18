@@ -157,7 +157,7 @@ cd $install_path && unzip ngx_http_geoip2_module.zip && mv ngx_http_geoip2_modul
 #brotli压缩：https://github.com/google/ngx_brotli
 wget --no-check-certificate --no-cache -O $install_path/ngx_brotli.zip https://install.ruanzhijun.cn/ngx_brotli.zip || exit
 cd $install_path && unzip ngx_brotli.zip && mv ngx_brotli-master ngx_brotli || exit
-cd $install_path/ngx_brotli/deps && rm -rf brotli && wget https://install.ruanzhijun.cn/brotli.zip && unzip brotli.zip && mv brotli-master brotli || exit
+cd $install_path/ngx_brotli/deps && rm -rf brotli && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/brotli.zip && unzip brotli.zip && mv brotli-master brotli || exit
 
 #文件合并：https://github.com/alibaba/nginx-http-concat
 wget --no-check-certificate --no-cache -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
