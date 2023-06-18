@@ -1,5 +1,5 @@
 #linux java
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-java.sh && sh install-java.sh jdk-11.0.12 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-java.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-java.sh && sh install-java.sh jdk-17.0.7 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ java_version=$1
 java_install_path=$2
 if [ ! $java_version ] || [ ! $java_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-java.sh jdk-11.0.12 /usr/local'
+	echo 'for example: sh install-java.sh 17.0.7 /usr/local'
 	exit
 fi
 
