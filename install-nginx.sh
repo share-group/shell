@@ -47,7 +47,7 @@ if [ ! -d $install_path/$zlib ]; then
 fi
 
 #下载pcre
-pcre='pcre2-10.37'
+pcre='pcre2-10.42'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -135,7 +135,7 @@ if [ ! -d $install_path/$libatomic ]; then
 fi
 
 #安装libmaxminddb
-geoip='libmaxminddb-1.6.0'
+geoip='libmaxminddb-1.7.1'
 if [ ! -d $install_path/$geoip ]; then
 	echo 'installing '$geoip' ...'
 	if [ ! -f $base_path/$geoip.tar.gz ]; then
