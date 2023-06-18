@@ -21,9 +21,9 @@ docker info || exit
 #给docker配置个VPN
 mkdir -p /etc/systemd/system/docker.service.d
 echo '[Service]' > /etc/systemd/system/docker.service.d/proxy.conf
-echo 'Environment="HTTP_PROXY=http://127.0.0.1:7890/"' > /etc/systemd/system/docker.service.d/proxy.conf
-echo 'Environment="HTTPS_PROXY=http://127.0.0.1:7890/"' > /etc/systemd/system/docker.service.d/proxy.conf
-echo 'Environment="NO_PROXY=localhost,127.0.0.1,.docker.com"' > /etc/systemd/system/docker.service.d/proxy.conf
+echo 'Environment="HTTP_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
+echo 'Environment="HTTPS_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
+echo 'Environment="NO_PROXY=localhost,127.0.0.1,.docker.com"' >> /etc/systemd/system/docker.service.d/proxy.conf
 
 #解决docker日志过大的问题
 mkdir -p /etc/docker
