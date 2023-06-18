@@ -28,7 +28,7 @@ if [ ! -d $install_path/$zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
 		echo $zlib'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$zlib.tar.gz https://install.ruanzhijun.cn/$zlib.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$zlib.tar.gz https://install.ruanzhijun.cn/$zlib.tar.gz || exit
 		echo 'download '$zlib' finished...'
 	fi
 	tar zxvf $base_path/$zlib.tar.gz -C $install_path || exit
@@ -52,7 +52,7 @@ if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
 		echo $pcre'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$pcre.tar.gz https://install.ruanzhijun.cn/$pcre.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$pcre.tar.gz https://install.ruanzhijun.cn/$pcre.tar.gz || exit
 		echo 'download '$pcre' finished...'
 	fi
 	tar zxvf $base_path/$pcre.tar.gz -C $install_path || exit
@@ -62,7 +62,7 @@ fi
 if [ ! -d $nginx_install_path/libiconv ]; then
 	libiconv='libiconv-1.17'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
-		wget -O $base_path/$libiconv.tar.gz https://install.ruanzhijun.cn/$libiconv.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$libiconv.tar.gz https://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
 	tar zxvf $base_path/$libiconv.tar.gz -C $install_path || exit
 	cd $install_path/$libiconv/srclib
@@ -79,7 +79,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 		echo 'installing '$jemalloc' ...'
 		if [ ! -f $base_path/$jemalloc.tar.bz2 ]; then
 			echo $jemalloc'.tar.bz2 is not exists, system will going to download it...'
-			wget -O $base_path/$jemalloc.tar.bz2 https://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
+			wget --no-check-certificate --no-cache -O $base_path/$jemalloc.tar.bz2 https://install.ruanzhijun.cn/$jemalloc.tar.bz2 || exit
 			echo 'download '$jemalloc' finished...'
 		fi
 		tar jxvf $base_path/$jemalloc.tar.bz2 -C $install_path || exit
@@ -94,14 +94,14 @@ fi
 openssl='openssl-3.0.9'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
-	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 	echo 'download '$openssl' finished...'
 fi
 if [ ! -d $nginx_install_path/openssl ]; then
 	echo 'installing '$openssl' ...'
 	if [ ! -f $base_path/$openssl.tar.gz ]; then
 		echo $openssl'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 		echo 'download '$openssl' finished...'
 	fi
 	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
@@ -128,7 +128,7 @@ if [ ! -d $install_path/$libatomic ]; then
 	echo 'installing '$libatomic' ...'
 	if [ ! -f $base_path/$libatomic.tar.gz ]; then
 		echo $libatomic'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$libatomic.tar.gz https://install.ruanzhijun.cn/$libatomic.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$libatomic.tar.gz https://install.ruanzhijun.cn/$libatomic.tar.gz || exit
 		echo 'download '$libatomic' finished...'
 	fi
 	tar zxvf $base_path/$libatomic.tar.gz -C $install_path || exit
@@ -140,7 +140,7 @@ if [ ! -d $install_path/$geoip ]; then
 	echo 'installing '$geoip' ...'
 	if [ ! -f $base_path/$geoip.tar.gz ]; then
 		echo $geoip'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$geoip.tar.gz https://install.ruanzhijun.cn/$geoip.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$geoip.tar.gz https://install.ruanzhijun.cn/$geoip.tar.gz || exit
 		echo 'download '$geoip' finished...'
 	fi
 	tar zxvf $base_path/$geoip.tar.gz -C $install_path || exit
@@ -169,7 +169,7 @@ echo 'installing '$nginx' ...'
 if [ ! -d $nginx_install_path/nginx ]; then
 	if [ ! -f $base_path/$nginx.tar.gz ]; then
 		echo $nginx'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$nginx.tar.gz https://install.ruanzhijun.cn/$nginx.tar.gz || exit
+		wget --no-check-certificate --no-cache -O $base_path/$nginx.tar.gz https://install.ruanzhijun.cn/$nginx.tar.gz || exit
 		echo 'download '$nginx' finished...'
 	fi
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
