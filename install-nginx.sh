@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
-yum -y install wget gcc gcc-c++ make perl-core openssl openssl-devel patch
+yum -y install wget gcc gcc-c++ make perl-core openssl openssl-devel patch unzip
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -177,7 +177,7 @@ if [ ! -d $nginx_install_path/go ]; then
 	echo 'export GOROOT='$nginx_install_path'/go' >> /etc/profile || exit
 	echo 'export GOBIN=$GOROOT/bin' >> /etc/profile || exit
 	source /etc/profile || exit
-	go version || echo 'go install fail ...' && exit
+	go version
 	go env -w GO111MODULE=on
 	go env -w GOPROXY=https://goproxy.cn,direct
 fi
@@ -227,13 +227,12 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	fi
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
-cd $install_path/$nginx
 
 # 打个补丁，让boringssl支持ocsp
 wget --no-check-certificate --no-cache -O Enable_BoringSSL_OCSP.patch https://install.ruanzhijun.cn/Enable_BoringSSL_OCSP.patch && patch -p1 < ./Enable_BoringSSL_OCSP.patch
 
-# 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+# 编译 --with-openssl=$install_path/$openssl
+cd $install_path/$nginx && ./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -354,7 +353,7 @@ server {
 	add_header Access-Control-Allow-Methods '*';
 	add_header Access-Control-Allow-Headers '*';
 
-	#不允许用框架、强制是使用https
+	#不允许用iframe、强制是使用https
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
 	add_header Strict-Transport-Security 'max-age=3153600000; includeSubDomains; preload;';
