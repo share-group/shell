@@ -40,7 +40,7 @@ clash -v
 #下载GeoIp数据库
 geoip_version='20230616'
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
-mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget -O config.yaml https://install.ruanzhijun.cn/config.yml && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb ./Country.mmdb || exit
+mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget -O config.yaml https://install.ruanzhijun.cn/config.yaml && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb ./Country.mmdb || exit
 
 #加入系统服务
 echo '[Unit]' > /etc/systemd/system/clash.service

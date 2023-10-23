@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.24.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.25.2 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,12 +9,12 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.24.0 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.25.2 /usr/local'
 	exit
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7) #查询cpu逻辑个数
-yum -y install wget gcc gcc-c++ make perl-core
+yum -y install wget gcc gcc-c++ make perl-core openssl openssl-devel patch
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -91,7 +91,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.0.9'
+openssl='openssl-3.1.3'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
@@ -148,6 +148,58 @@ if [ ! -d $install_path/$geoip ]; then
 	./configure && make -j $worker_processes && make install || exit
 fi
 
+#安装cmake
+cmake='cmake-3.27.7'
+if [ ! -d $nginx_install_path/cmake ]; then
+	echo 'installing '$cmake'...'
+	if [ ! -f $base_path/$cmake.tar.gz ]; then
+		echo $cmake'.tar.gz is not exists, system will going to download it...'
+		wget --no-check-certificate --no-cache -O $base_path/$cmake.tar.gz https://install.ruanzhijun.cn/$cmake.tar.gz || exit
+		echo 'download '$cmake' finished...'
+	fi
+	tar zxvf $base_path/$cmake.tar.gz -C $install_path || exit
+	cd $install_path/$cmake
+	./bootstrap --no-system-curl --prefix=$nginx_install_path/cmake && make -j $worker_processes && make install || exit
+	cd /usr/bin && ln -s $nginx_install_path/cmake/bin/cmake cmake && chmod 777 cmake || exit
+fi
+
+#安装go
+go='1.21.3'
+if [ ! -d $nginx_install_path/go ]; then
+	echo 'installing '$go'...'
+	if [ ! -f $base_path/go$go.linux-amd64.tar.gz ]; then
+		echo 'go'$go'.linux-amd64.tar.gz not exists, system will going to download it...'
+		wget --no-check-certificate --no-cache -O $base_path/go$go.linux-amd64.tar.gz https://install.ruanzhijun.cn/go$go.linux-amd64.tar.gz || exit
+		echo 'download '$go' finished...'
+	fi
+	tar zxvf $base_path/go$go.linux-amd64.tar.gz -C $nginx_install_path || exit
+	echo 'export PATH=$PATH:'$nginx_install_path'/go/bin' >> /etc/profile || exit
+	echo 'export GOROOT='$nginx_install_path'/go' >> /etc/profile || exit
+	echo 'export GOBIN=$GOROOT/bin' >> /etc/profile || exit
+	source /etc/profile || exit
+	go version || echo 'go install fail ...' && exit
+	go env -w GO111MODULE=on
+	go env -w GOPROXY=https://goproxy.cn,direct
+fi
+
+# 安装boringssl
+boringssl='boringssl'
+if [ ! -f $base_path/$boringssl.tar.gz ]; then
+	echo $boringssl'.tar.gz is not exists, system will going to download it...'
+	wget --no-check-certificate --no-cache -O $base_path/$boringssl.tar.gz https://install.ruanzhijun.cn/$boringssl.tar.gz || exit
+	echo 'download '$boringssl' finished...'
+fi
+
+#编译boringssl
+mkdir -p $install_path/boringssl && tar zxvf $base_path/$boringssl.tar.gz -C $install_path/boringssl || exit
+cd $install_path/boringssl && mkdir -p $install_path/boringssl/build $install_path/boringssl/.openssl/lib $install_path/boringssl/.openssl/include || exit
+ln -sf $install_path/boringssl/include/openssl $install_path/boringssl/.openssl/include/openssl || exit
+touch $install_path/boringssl/.openssl/include/openssl/ssl.h || exit
+cmake -B$install_path/boringssl/build -H$install_path/boringssl || exit
+make -j $worker_processes -C $install_path/boringssl/build || exit
+cp $install_path/boringssl/build/crypto/libcrypto.a $install_path/boringssl/build/ssl/libssl.a $install_path/boringssl/.openssl/lib || exit
+
+
 ########## 增加nginx第三方模块：https://www.nginx.com/resources/wiki/modules/index.html ##########
 
 #geoip2：https://github.com/leev/ngx_http_geoip2_module
@@ -163,6 +215,7 @@ cd $install_path/ngx_brotli/deps && rm -rf brotli && wget --no-check-certificate
 wget --no-check-certificate --no-cache -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
 cd $install_path && unzip nginx-http-concat.zip && mv nginx-http-concat-master nginx-http-concat || exit
 
+
 #安装nginx
 nginx='nginx-'$nginx_version
 echo 'installing '$nginx' ...'
@@ -175,7 +228,12 @@ if [ ! -d $nginx_install_path/nginx ]; then
 	tar zxvf $base_path/$nginx.tar.gz -C $install_path || exit
 fi
 cd $install_path/$nginx
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+
+# 打个补丁，让boringssl支持ocsp
+wget --no-check-certificate --no-cache -O Enable_BoringSSL_OCSP.patch https://install.ruanzhijun.cn/Enable_BoringSSL_OCSP.patch && patch -p1 < ./Enable_BoringSSL_OCSP.patch
+
+# 编译
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -224,18 +282,18 @@ http {
 	server_tokens off;
 
 	#GeoIP配置
-  geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
-    auto_reload 5m;
-    \$geoip2_country_code source = \$remote_addr country iso_code;
-    \$geoip2_country_name_en source = \$remote_addr country names en;
-    \$geoip2_country_name_cn source = \$remote_addr country names zh-CN;
-  }
+	geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
+		auto_reload 5m;
+		\$geoip2_country_code source = \$remote_addr country iso_code;
+		\$geoip2_country_name_en source = \$remote_addr country names en;
+		\$geoip2_country_name_cn source = \$remote_addr country names zh-CN;
+	}
 
-  geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
-    \$geoip2_city_name_en source = \$remote_addr city names en;
-    \$geoip2_city_name_cn source = \$remote_addr city names zh-CN;
-    \$geoip2_data_city_code source = \$remote_addr city geoname_id;
-  }
+	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+		\$geoip2_city_name_en source = \$remote_addr city names en;
+		\$geoip2_city_name_cn source = \$remote_addr city names zh-CN;
+		\$geoip2_data_city_code source = \$remote_addr city geoname_id;
+	}
 
 	include "$nginx_install_path"/nginx/conf/web/*.conf;
 }
@@ -267,7 +325,7 @@ server {
 	ssl_certificate /letsencrypt/letsencrypt/demo.crt;
 	ssl_certificate_key /letsencrypt/letsencrypt/demo.key;
 	ssl_ciphers 	\"TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA\";
-	ssl_protocols TLSv1.3;
+	ssl_protocols TLSv1.2 TLSv1.3;
 	ssl_dhparam /letsencrypt/letsencrypt/demo.pem;
 	ssl_prefer_server_ciphers on;
 	ssl_early_data on;
@@ -293,10 +351,10 @@ server {
 	#允许跨域
 	add_header Access-Control-Allow-Origin '*';
 	add_header Access-Control-Allow-Credentials 'true';
-	add_header Access-Control-Allow-Methods 'GET,POST,OPTIONS,PUT,DELETE,PATCH';
-	add_header Access-Control-Allow-Headers 'Keep-Alive,User-Agent,X-Requested-With,Content-Type,token,lang';
+	add_header Access-Control-Allow-Methods '*';
+	add_header Access-Control-Allow-Headers '*';
 
-	#不允许用框架、强制用https
+	#不允许用框架、强制是使用https
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
 	add_header Strict-Transport-Security 'max-age=3153600000; includeSubDomains; preload;';
