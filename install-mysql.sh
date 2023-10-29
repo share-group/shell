@@ -84,7 +84,7 @@ rm -rf $install_path/$mysql/CMakeCache.txt
 $mysql_install_path/cmake/bin/cmake . -DCMAKE_INSTALL_PREFIX=$mysql_install_path/mysql -DMYSQL_UNIX_ADDR=$mysql_data_path/mysql.sock -DSYSCONFDIR=/etc -DDEFAULT_CHARSET=utf8mb4 -DDEFAULT_COLLATION=utf8mb4_general_ci -DWITH_SAFEMALLOC=ON -DWITH_EXTRA_CHARSETS:STRING=utf8mb4 -DWITH_BOOST=$install_path/$boost -DWITH_INNOBASE_STORAGE_ENGINE=1 -DWITH_DEBUG=0 -DWITH_MEMORY_STORAGE_ENGINE=1 -DWITH_READLINE=1 -DENABLED_LOCAL_INFILE=1 -DMYSQL_DATADIR=$mysql_data_path -DMYSQL_USER=mysql || exit
 
 #查询cpu逻辑个数
-cpus=$(cat /proc/cpuinfo | grep name | cut -f3 -d: | uniq -c | cut -b 7)
+cpus=$(nproc --all)
 
 make || exit
 make -j `expr 4 \* $cpus` || exit

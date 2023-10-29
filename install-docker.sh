@@ -19,15 +19,15 @@ docker -v || exit
 docker info || exit
 
 #给docker配置个VPN
-mkdir -p /etc/systemd/system/docker.service.d
-echo '[Service]' > /etc/systemd/system/docker.service.d/proxy.conf
-echo 'Environment="HTTP_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
-echo 'Environment="HTTPS_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
-echo 'Environment="NO_PROXY=localhost,127.0.0.1,.docker.com"' >> /etc/systemd/system/docker.service.d/proxy.conf
+#mkdir -p /etc/systemd/system/docker.service.d
+#echo '[Service]' > /etc/systemd/system/docker.service.d/proxy.conf
+#echo 'Environment="HTTP_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
+#echo 'Environment="HTTPS_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
+#echo 'Environment="NO_PROXY=localhost,127.0.0.1,.docker.com"' >> /etc/systemd/system/docker.service.d/proxy.conf
 
 #解决docker日志过大的问题
 mkdir -p /etc/docker
-echo '{"storage-driver":"overlay2","log-driver":"json-file","log-opts":{"max-size":"1m","max-file":"1"}}' > /etc/docker/daemon.json || exit
+echo '{"storage-driver":"overlay2","log-driver":"json-file","log-opts":{"max-size":"1k","max-file":"1"}}' > /etc/docker/daemon.json || exit
 systemctl daemon-reload && systemctl restart docker && docker info || exit
 
 #安装docker-compose
