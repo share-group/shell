@@ -24,7 +24,7 @@ rm -rf $nodejs_install_path/nodejs
 echo 'installing node-v'$nodejs_version' ...'
 if [ ! -f $base_path/node-v$nodejs_version-linux-x64.tar.xz ]; then
 	echo 'node-v'$nodejs_version'-linux-x64.tar.xz is not exists, system will going to download it...'
-	wget -O $base_path/node-v$nodejs_version-linux-x64.tar.xz https://install.ruanzhijun.cn/node-v$nodejs_version-linux-x64.tar.xz || exit
+	wget --no-check-certificate --no-cache -O $base_path/node-v$nodejs_version-linux-x64.tar.xz https://install.ruanzhijun.cn/node-v$nodejs_version-linux-x64.tar.xz || exit
 	echo 'download node-v'$nodejs_version' finished...'
 fi
 xz -d node-v$nodejs_version-linux-x64.tar.xz

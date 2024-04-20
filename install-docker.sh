@@ -27,7 +27,7 @@ docker info || exit
 
 #解决docker日志过大的问题
 mkdir -p /etc/docker
-echo '{"storage-driver":"overlay2","log-driver":"json-file","log-opts":{"max-size":"1k","max-file":"1"}}' > /etc/docker/daemon.json || exit
+echo '{"storage-driver":"overlay2","log-driver":"json-file","log-opts":{"max-size":"10m","max-file":"1"}}' > /etc/docker/daemon.json || exit
 systemctl daemon-reload && systemctl restart docker && docker info || exit
 
 #安装docker-compose

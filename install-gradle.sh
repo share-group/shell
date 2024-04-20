@@ -24,7 +24,7 @@ if [ ! -d $install_path/$gradle ]; then
 	echo 'installing '$gradle' ...'
 	if [ ! -f $base_path/$gradle.zip ]; then
 		echo $gradle'-bin.zip is not exists, system will going to download it...'
-		wget -O $base_path/$gradle.zip https://install.ruanzhijun.cn/$gradle-bin.zip || exit
+		wget --no-check-certificate --no-cache -O $base_path/$gradle.zip https://install.ruanzhijun.cn/$gradle-bin.zip || exit
 		echo 'download '$gradle' finished...'
 	fi
 	unzip $gradle.zip
