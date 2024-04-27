@@ -23,7 +23,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载zlib
-zlib='zlib-1.2.12'
+zlib='zlib-1.3.1'
 if [ ! -d $install_path/$zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
@@ -47,7 +47,7 @@ if [ ! -d $install_path/$zlib ]; then
 fi
 
 #下载pcre
-pcre='pcre2-10.42'
+pcre='pcre2-10.43'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...'
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -91,7 +91,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.1.3'
+openssl='openssl-3.3.0'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
@@ -149,7 +149,7 @@ if [ ! -d $install_path/$geoip ]; then
 fi
 
 #安装cmake
-cmake='cmake-3.27.7'
+cmake='cmake-3.29.2'
 if [ ! -d $nginx_install_path/cmake ]; then
 	echo 'installing '$cmake'...'
 	if [ ! -f $base_path/$cmake.tar.gz ]; then
@@ -164,7 +164,7 @@ if [ ! -d $nginx_install_path/cmake ]; then
 fi
 
 #安装go
-go='1.21.3'
+go='1.22.2'
 if [ ! -d $nginx_install_path/go ]; then
 	echo 'installing '$go'...'
 	if [ ! -f $base_path/go$go.linux-amd64.tar.gz ]; then
@@ -184,14 +184,14 @@ fi
 
 # 安装boringssl
 boringssl='boringssl'
-if [ ! -f $base_path/$boringssl.tar.gz ]; then
-	echo $boringssl'.tar.gz is not exists, system will going to download it...'
-	wget --no-check-certificate --no-cache -O $base_path/$boringssl.tar.gz https://install.ruanzhijun.cn/$boringssl.tar.gz || exit
+if [ ! -f $base_path/$boringssl.zip ]; then
+	echo $boringssl'.zip is not exists, system will going to download it...'
+	wget --no-check-certificate --no-cache -O $base_path/$boringssl.zip https://install.ruanzhijun.cn/$boringssl.zip || exit
 	echo 'download '$boringssl' finished...'
 fi
 
 #编译boringssl
-mkdir -p $install_path/boringssl && tar zxvf $base_path/$boringssl.tar.gz -C $install_path/boringssl || exit
+cd $install_path && cp $base_path/$boringssl.zip . && unzip $boringssl.zip && mv $boringssl-master $boringssl || exit
 cd $install_path/boringssl && mkdir -p $install_path/boringssl/build $install_path/boringssl/.openssl/lib $install_path/boringssl/.openssl/include || exit
 ln -sf $install_path/boringssl/include/openssl $install_path/boringssl/.openssl/include/openssl || exit
 touch $install_path/boringssl/.openssl/include/openssl/ssl.h || exit
@@ -233,7 +233,7 @@ cd $install_path/$nginx
 #wget --no-check-certificate --no-cache -O Enable_BoringSSL_OCSP.patch https://install.ruanzhijun.cn/Enable_BoringSSL_OCSP.patch && patch -p1 < ./Enable_BoringSSL_OCSP.patch
 
 # 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-debug --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include -x c" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -322,7 +322,7 @@ server {
 	root  "$web_root";
 	index index.html index.php;
 
-	ssl_certificate /letsencrypt/letsencrypt/demo.crt;
+	ssl_certificate /letsencrypt/letsencrypt/demo.cer;
 	ssl_certificate_key /letsencrypt/letsencrypt/demo.key;
 	ssl_ciphers 	\"TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA\";
 	ssl_protocols TLSv1.2 TLSv1.3;
@@ -368,7 +368,7 @@ $(source /etc/profile)
 #复制demo https证书
 mkdir -p /letsencrypt/letsencrypt/
 cd /letsencrypt/letsencrypt/
-wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.crt
+wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.cer
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.key
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
