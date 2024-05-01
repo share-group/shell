@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.25.5 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.26.0 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,12 +9,12 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.25.5 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.26.0 /usr/local'
 	exit
 fi
 
 worker_processes=$(nproc --all) #查询cpu逻辑个数
-yum -y install wget gcc gcc-c++ make perl-core openssl openssl-devel patch unzip
+yum -y install wget gcc gcc-c++ make pcre-devel perl-core openssl openssl-devel patch unzip
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -44,18 +44,6 @@ if [ ! -d $install_path/$zlib ]; then
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.2.12 libz.so.1.2.12
 	echo $nginx_install_path"/zlib/lib" >> /etc/ld.so.conf
 	ldconfig
-fi
-
-#下载pcre
-pcre='pcre2-10.43'
-if [ ! -d $install_path/$pcre ]; then
-	echo 'installing '$pcre' ...'
-	if [ ! -f $base_path/$pcre.tar.gz ]; then
-		echo $pcre'.tar.gz is not exists, system will going to download it...'
-		wget --no-check-certificate --no-cache -O $base_path/$pcre.tar.gz https://install.ruanzhijun.cn/$pcre.tar.gz || exit
-		echo 'download '$pcre' finished...'
-	fi
-	tar zxvf $base_path/$pcre.tar.gz -C $install_path || exit
 fi
 
 #安装libiconv
@@ -177,7 +165,7 @@ if [ ! -d $nginx_install_path/go ]; then
 	echo 'export GOROOT='$nginx_install_path'/go' >> /etc/profile || exit
 	echo 'export GOBIN=$GOROOT/bin' >> /etc/profile || exit
 	source /etc/profile || exit
-	go version || echo 'go install fail ...' && exit
+	go version
 	go env -w GO111MODULE=on
 	go env -w GOPROXY=https://goproxy.cn,direct
 fi
@@ -233,7 +221,7 @@ cd $install_path/$nginx
 #wget --no-check-certificate --no-cache -O Enable_BoringSSL_OCSP.patch https://install.ruanzhijun.cn/Enable_BoringSSL_OCSP.patch && patch -p1 < ./Enable_BoringSSL_OCSP.patch
 
 # 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include -x c" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include -x c" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -286,12 +274,10 @@ http {
 		auto_reload 5m;
 		\$geoip2_country_code source = \$remote_addr country iso_code;
 		\$geoip2_country_name_en source = \$remote_addr country names en;
-		\$geoip2_country_name_cn source = \$remote_addr country names zh-CN;
 	}
 
 	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
 		\$geoip2_city_name_en source = \$remote_addr city names en;
-		\$geoip2_city_name_cn source = \$remote_addr city names zh-CN;
 		\$geoip2_data_city_code source = \$remote_addr city geoname_id;
 	}
 
@@ -311,14 +297,18 @@ mv $nginx_install_path/nginx/html $nginx_install_path/nginx/$web_root
 echo 'create a demo conf , demo.conf...'
 echo "
 server {
-	listen 80 http2;
-	listen [::]:80 http2;
+	http2 on;
+	listen 80;
+	listen [::]:80;
 	rewrite ^/(.*) https://\$host/\$1 permanent;
 }
 
 server {
-	listen 443 ssl http2;
-	listen [::]:443 ssl http2;
+	http2 on;
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	listen 443 quic reuseport;
+	listen [::]:443 quic reuseport;
 	root  "$web_root";
 	index index.html index.php;
 
@@ -373,7 +363,8 @@ wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shel
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
 #下载GeoIp数据库
-geoip_version='20230616'
+geoip_version='20240430'
+rm -rf /usr/share/GeoIP
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
 mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
