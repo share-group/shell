@@ -75,7 +75,7 @@ if [ ! -d $php_install_path/zlib ]; then
 fi
 
 # 安装python 
-python='Python-3.6.0'
+python='Python-3.12.3'
 if [ ! -d $php_install_path/python ]; then
 	echo 'installing '$python' ...'
 	if [ ! -f $base_path/$python.tgz ]; then

@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(nproc --all) #查询cpu逻辑个数
-yum -y install wget gcc gcc-c++ make pcre-devel perl-core openssl openssl-devel patch unzip
+yum -y install wget gcc gcc-c++ make pcre-devel perl-core patch unzip
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -41,7 +41,7 @@ if [ ! -d $install_path/$zlib ]; then
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.a libz.a
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so libz.so
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1 libz.so.1
-	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.2.12 libz.so.1.2.12
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.3.1 libz.so.1.3.1
 	echo $nginx_install_path"/zlib/lib" >> /etc/ld.so.conf
 	ldconfig
 fi
@@ -76,34 +76,6 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 		echo $nginx_install_path"/jemalloc/lib" >> /etc/ld.so.conf || exit
 		ldconfig
 	fi
-fi
-
-# 安装OpenSSL
-openssl='openssl-3.3.0'
-if [ ! -f $base_path/$openssl.tar.gz ]; then
-	echo $openssl'.tar.gz is not exists, system will going to download it...'
-	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
-	echo 'download '$openssl' finished...'
-fi
-if [ ! -d $nginx_install_path/openssl ]; then
-	echo 'installing '$openssl' ...'
-	if [ ! -f $base_path/$openssl.tar.gz ]; then
-		echo $openssl'.tar.gz is not exists, system will going to download it...'
-		wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
-		echo 'download '$openssl' finished...'
-	fi
-	#tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
-	#cd $install_path/$openssl
-	#rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make update && make -j $worker_processes && make install || exit
-	#rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
-	#rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
-	#rm -rf /usr/lib/libssl.so && ln -s $nginx_install_path/openssl/lib64/libssl.so /usr/lib/libssl.so
-	#rm -rf /usr/lib/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib/libcrypto.so
-	#rm -rf /usr/lib64/libssl.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libssl.so
-	#rm -rf /usr/lib64/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libcrypto.so
-	#echo $nginx_install_path"/openssl/lib64" >> /etc/ld.so.conf
-	#ldconfig -v
-	echo $openssl' install finished...'
 fi
 
 #再解压一次给nginx编译用
@@ -270,15 +242,21 @@ http {
 	server_tokens off;
 
 	#GeoIP配置
+	geoip2 /usr/share/GeoIP/GeoLite2-ASN.mmdb {
+        auto_reload 5m;
+        \$geoip2_asn source = \$remote_addr autonomous_system_number;
+        \$geoip2_organization source = \$remote_addr autonomous_system_organization;
+    }
+	
+	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+		\$geoip2_city_name_en source = \$remote_addr city names en;
+		\$geoip2_data_city_code source = \$remote_addr city geoname_id;
+	}
+	
 	geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
 		auto_reload 5m;
 		\$geoip2_country_code source = \$remote_addr country iso_code;
 		\$geoip2_country_name_en source = \$remote_addr country names en;
-	}
-
-	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
-		\$geoip2_city_name_en source = \$remote_addr city names en;
-		\$geoip2_data_city_code source = \$remote_addr city geoname_id;
 	}
 
 	include "$nginx_install_path"/nginx/conf/web/*.conf;
@@ -305,10 +283,9 @@ server {
 
 server {
 	http2 on;
+	autoindex off;
 	listen 443 ssl;
-	listen [::]:443 ssl;
 	listen 443 quic reuseport;
-	listen [::]:443 quic reuseport;
 	root  "$web_root";
 	index index.html index.php;
 
@@ -348,6 +325,10 @@ server {
 	add_header x-Content-Type-Options nosniff;
 	add_header X-Frame-Options deny;
 	add_header Strict-Transport-Security 'max-age=3153600000; includeSubDomains; preload;';
+	
+	#http3配置
+	add_header QUIC-Status $http3;
+	add_header Alt-Svc 'h3=\":443\"; ma=3153600000;quic=\":443\"; ma=3153600000; v=\"46,43\",h3-27=\":443\"; ma=3153600000,h3-25=\":443\"; ma=3153600000,h3-T050=\":443\"; ma=3153600000,h3-Q050=\":443\"; ma=3153600000,h3-Q049=\":443\"; ma=3153600000,h3-Q048=\":443\"; ma=3153600000,h3-Q046=\":443\"; ma=3153600000,h3-Q043=\":443\"; ma=3153600000';
 }" > $nginx_install_path/nginx/conf/web/demo.conf
 
 #修改环境变量
@@ -363,12 +344,14 @@ wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shel
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
 #下载GeoIp数据库
-geoip_version='20240430'
+geoip_version='20240604'
 rm -rf /usr/share/GeoIP
-cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-ASN_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
-mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-ASN_$geoip_version/GeoLite2-ASN.mmdb /usr/share/GeoIP/GeoLite2-ASN.mmdb || exit
 mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-City_$geoip_version/GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
 
 #启动nginx
 yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/
