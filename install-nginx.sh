@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.26.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.26.1 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,12 +9,12 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.26.0 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.26.1 /usr/local'
 	exit
 fi
 
 worker_processes=$(nproc --all) #查询cpu逻辑个数
-yum -y install lrzsz wget vim gcc gcc-c++ make pcre-devel perl-core patch unzip tar bzip2
+yum -y install lrzsz wget vim gcc gcc-c++ make openssl-devel pcre-devel perl-core patch unzip tar bzip2
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -79,34 +79,14 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.3.1'
+openssl='openssl-openssl-3.1.5-quic1'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 	echo 'download '$openssl' finished...'
 fi
-if [ ! -d $nginx_install_path/openssl ]; then
-	echo 'installing '$openssl' ...'
-	if [ ! -f $base_path/$openssl.tar.gz ]; then
-		echo $openssl'.tar.gz is not exists, system will going to download it...'
-		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
-		echo 'download '$openssl' finished...'
-	fi
-	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
-	cd $install_path/$openssl
-	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make update && make -j $worker_processes && make install || exit
-	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
-	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
-	rm -rf /usr/lib/libssl.so && ln -s $nginx_install_path/openssl/lib64/libssl.so /usr/lib/libssl.so
-	rm -rf /usr/lib/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib/libcrypto.so
-	rm -rf /usr/lib64/libssl.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libssl.so
-	rm -rf /usr/lib64/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libcrypto.so
-	echo $nginx_install_path"/openssl/lib64" >> /etc/ld.so.conf
-	ldconfig -v
-	echo $openssl' install finished...'
-fi
 
-#再解压一次给nginx编译用
+#解压给nginx编译用
 rm -rf $install_path/$openssl
 cd $base_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 
