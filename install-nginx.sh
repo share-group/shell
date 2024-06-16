@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(nproc --all) #查询cpu逻辑个数
-yum -y install wget gcc gcc-c++ make pcre-devel perl-core patch unzip
+yum -y install lrzsz wget vim gcc gcc-c++ make pcre-devel perl-core patch unzip tar bzip2
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -78,6 +78,34 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 	fi
 fi
 
+# 安装OpenSSL
+openssl='openssl-3.3.1'
+if [ ! -f $base_path/$openssl.tar.gz ]; then
+	echo $openssl'.tar.gz is not exists, system will going to download it...'
+	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+	echo 'download '$openssl' finished...'
+fi
+if [ ! -d $nginx_install_path/openssl ]; then
+	echo 'installing '$openssl' ...'
+	if [ ! -f $base_path/$openssl.tar.gz ]; then
+		echo $openssl'.tar.gz is not exists, system will going to download it...'
+		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		echo 'download '$openssl' finished...'
+	fi
+	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+	cd $install_path/$openssl
+	rm -rf $nginx_install_path/openssl && ./config shared zlib --prefix=$nginx_install_path/openssl && $install_path/$openssl/config -t && make update && make -j $worker_processes && make install || exit
+	rm -rf /usr/bin/openssl && ln -s $nginx_install_path/openssl/bin/openssl /usr/bin/openssl
+	rm -rf /usr/include/openssl && ln -s $nginx_install_path/openssl/include/openssl /usr/include/openssl
+	rm -rf /usr/lib/libssl.so && ln -s $nginx_install_path/openssl/lib64/libssl.so /usr/lib/libssl.so
+	rm -rf /usr/lib/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib/libcrypto.so
+	rm -rf /usr/lib64/libssl.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libssl.so
+	rm -rf /usr/lib64/libcrypto.so && ln -s $nginx_install_path/openssl/lib64/libcrypto.so /usr/lib64/libcrypto.so
+	echo $nginx_install_path"/openssl/lib64" >> /etc/ld.so.conf
+	ldconfig -v
+	echo $openssl' install finished...'
+fi
+
 #再解压一次给nginx编译用
 rm -rf $install_path/$openssl
 cd $base_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
@@ -95,7 +123,7 @@ if [ ! -d $install_path/$libatomic ]; then
 fi
 
 #安装libmaxminddb
-geoip='libmaxminddb-1.7.1'
+geoip='libmaxminddb-1.10.0'
 if [ ! -d $install_path/$geoip ]; then
 	echo 'installing '$geoip' ...'
 	if [ ! -f $base_path/$geoip.tar.gz ]; then
@@ -107,58 +135,6 @@ if [ ! -d $install_path/$geoip ]; then
 	cd $install_path/$geoip
 	./configure && make -j $worker_processes && make install || exit
 fi
-
-#安装cmake
-cmake='cmake-3.29.2'
-if [ ! -d $nginx_install_path/cmake ]; then
-	echo 'installing '$cmake'...'
-	if [ ! -f $base_path/$cmake.tar.gz ]; then
-		echo $cmake'.tar.gz is not exists, system will going to download it...'
-		wget --no-check-certificate --no-cache -O $base_path/$cmake.tar.gz https://install.ruanzhijun.cn/$cmake.tar.gz || exit
-		echo 'download '$cmake' finished...'
-	fi
-	tar zxvf $base_path/$cmake.tar.gz -C $install_path || exit
-	cd $install_path/$cmake
-	./bootstrap --no-system-curl --prefix=$nginx_install_path/cmake && make -j $worker_processes && make install || exit
-	cd /usr/bin && ln -s $nginx_install_path/cmake/bin/cmake cmake && chmod 777 cmake || exit
-fi
-
-#安装go
-go='1.22.2'
-if [ ! -d $nginx_install_path/go ]; then
-	echo 'installing '$go'...'
-	if [ ! -f $base_path/go$go.linux-amd64.tar.gz ]; then
-		echo 'go'$go'.linux-amd64.tar.gz not exists, system will going to download it...'
-		wget --no-check-certificate --no-cache -O $base_path/go$go.linux-amd64.tar.gz https://install.ruanzhijun.cn/go$go.linux-amd64.tar.gz || exit
-		echo 'download '$go' finished...'
-	fi
-	tar zxvf $base_path/go$go.linux-amd64.tar.gz -C $nginx_install_path || exit
-	echo 'export PATH=$PATH:'$nginx_install_path'/go/bin' >> /etc/profile || exit
-	echo 'export GOROOT='$nginx_install_path'/go' >> /etc/profile || exit
-	echo 'export GOBIN=$GOROOT/bin' >> /etc/profile || exit
-	source /etc/profile || exit
-	go version
-	go env -w GO111MODULE=on
-	go env -w GOPROXY=https://goproxy.cn,direct
-fi
-
-# 安装boringssl
-boringssl='boringssl'
-if [ ! -f $base_path/$boringssl.zip ]; then
-	echo $boringssl'.zip is not exists, system will going to download it...'
-	wget --no-check-certificate --no-cache -O $base_path/$boringssl.zip https://install.ruanzhijun.cn/$boringssl.zip || exit
-	echo 'download '$boringssl' finished...'
-fi
-
-#编译boringssl
-cd $install_path && cp $base_path/$boringssl.zip . && unzip $boringssl.zip && mv $boringssl-master $boringssl || exit
-cd $install_path/boringssl && mkdir -p $install_path/boringssl/build $install_path/boringssl/.openssl/lib $install_path/boringssl/.openssl/include || exit
-ln -sf $install_path/boringssl/include/openssl $install_path/boringssl/.openssl/include/openssl || exit
-touch $install_path/boringssl/.openssl/include/openssl/ssl.h || exit
-cmake -B$install_path/boringssl/build -H$install_path/boringssl || exit
-make -j $worker_processes -C $install_path/boringssl/build || exit
-cp $install_path/boringssl/build/crypto/libcrypto.a $install_path/boringssl/build/ssl/libssl.a $install_path/boringssl/.openssl/lib || exit
-
 
 ########## 增加nginx第三方模块：https://www.nginx.com/resources/wiki/modules/index.html ##########
 
@@ -189,11 +165,8 @@ if [ ! -d $nginx_install_path/nginx ]; then
 fi
 cd $install_path/$nginx
 
-# 打个补丁，让boringssl支持ocsp
-#wget --no-check-certificate --no-cache -O Enable_BoringSSL_OCSP.patch https://install.ruanzhijun.cn/Enable_BoringSSL_OCSP.patch && patch -p1 < ./Enable_BoringSSL_OCSP.patch
-
 # 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include -x c" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre --with-zlib=$install_path/$zlib --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -204,62 +177,62 @@ worker_processes "$worker_processes";
 worker_rlimit_nofile "$ulimit";
 
 events {
-	use epoll;
-	accept_mutex off;
-	worker_connections "$ulimit";
+  use epoll;
+  accept_mutex off;
+  worker_connections "$ulimit";
 }
 
 http {
-	include mime.types;
-	charset utf-8;
-	default_type application/octet-stream;
-	access_log off;
-	error_log "$nginx_install_path"/nginx/logs/error.log crit;
-	sendfile on;
-	tcp_nopush on;
-	tcp_nodelay on;
-	keepalive_timeout 60;
-	client_header_buffer_size 32k;
-	client_max_body_size 200m;
+  include mime.types;
+  charset utf-8;
+  default_type application/octet-stream;
+  access_log off;
+  error_log "$nginx_install_path"/nginx/logs/error.log crit;
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 60;
+  client_header_buffer_size 32k;
+  client_max_body_size 200m;
 
-	fastcgi_connect_timeout 600;
-	fastcgi_send_timeout 600;
-	fastcgi_read_timeout 600;
-	fastcgi_buffer_size 64k;
-	fastcgi_buffers 4 64k;
-	fastcgi_busy_buffers_size 128k;
-	fastcgi_temp_file_write_size 128k;
+  fastcgi_connect_timeout 600;
+  fastcgi_send_timeout 600;
+  fastcgi_read_timeout 600;
+  fastcgi_buffer_size 64k;
+  fastcgi_buffers 4 64k;
+  fastcgi_busy_buffers_size 128k;
+  fastcgi_temp_file_write_size 128k;
 
-	#开启brotli压缩
-	brotli on;
-	brotli_min_length 1;
-	brotli_buffers 16 8k;
-	brotli_comp_level 6;
-	brotli_static always;
-	brotli_types *;
+  #开启brotli压缩
+  brotli on;
+  brotli_min_length 1;
+  brotli_buffers 16 8k;
+  brotli_comp_level 6;
+  brotli_static always;
+  brotli_types *;
 
-	#不显示nginx的版本号
-	server_tokens off;
+  #不显示nginx的版本号
+  server_tokens off;
 
-	#GeoIP配置
-	geoip2 /usr/share/GeoIP/GeoLite2-ASN.mmdb {
-        auto_reload 5m;
-        \$geoip2_asn source = \$remote_addr autonomous_system_number;
-        \$geoip2_organization source = \$remote_addr autonomous_system_organization;
-    }
-	
-	geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
-		\$geoip2_city_name_en source = \$remote_addr city names en;
-		\$geoip2_data_city_code source = \$remote_addr city geoname_id;
-	}
-	
-	geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
-		auto_reload 5m;
-		\$geoip2_country_code source = \$remote_addr country iso_code;
-		\$geoip2_country_name_en source = \$remote_addr country names en;
-	}
+  #GeoIP配置
+  geoip2 /usr/share/GeoIP/GeoLite2-ASN.mmdb {
+    auto_reload 5m;
+    \$geoip2_asn source = \$remote_addr autonomous_system_number;
+    \$geoip2_organization source = \$remote_addr autonomous_system_organization;
+  }
 
-	include "$nginx_install_path"/nginx/conf/web/*.conf;
+  geoip2 /usr/share/GeoIP/GeoLite2-City.mmdb {
+    \$geoip2_city_name_en source = \$remote_addr city names en;
+    \$geoip2_data_city_code source = \$remote_addr city geoname_id;
+  }
+
+  geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
+  auto_reload 5m;
+    \$geoip2_country_code source = \$remote_addr country iso_code;
+    \$geoip2_country_name_en source = \$remote_addr country names en;
+  }
+
+  include "$nginx_install_path"/nginx/conf/web/*.conf;
 }
 " > $nginx_install_path/nginx/conf/nginx.conf || exit
 rm -rf $nginx_install_path/nginx/conf/web/
@@ -275,60 +248,60 @@ mv $nginx_install_path/nginx/html $nginx_install_path/nginx/$web_root
 echo 'create a demo conf , demo.conf...'
 echo "
 server {
-	http2 on;
-	listen 80;
-	listen [::]:80;
-	rewrite ^/(.*) https://\$host/\$1 permanent;
+  http2 on;
+  listen 80;
+  listen [::]:80;
+  rewrite ^/(.*) https://\$host/\$1 permanent;
 }
 
 server {
-	http2 on;
-	autoindex off;
-	listen 443 ssl;
-	listen 443 quic reuseport;
-	root  "$web_root";
-	index index.html index.php;
+  http2 on;
+  autoindex off;
+  listen 443 ssl;
+  listen 443 quic reuseport;
+  root  "$web_root";
+  index index.html;
 
-	ssl_certificate /letsencrypt/letsencrypt/demo.cer;
-	ssl_certificate_key /letsencrypt/letsencrypt/demo.key;
-	ssl_ciphers 	\"TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA\";
-	ssl_protocols TLSv1.2 TLSv1.3;
-	ssl_dhparam /letsencrypt/letsencrypt/demo.pem;
-	ssl_prefer_server_ciphers on;
-	ssl_early_data on;
-	ssl_session_cache shared:SSL:10m;
-	ssl_ecdh_curve secp384r1;
+  ssl_certificate /letsencrypt/letsencrypt/demo.cer;
+  ssl_certificate_key /letsencrypt/letsencrypt/demo.key;
+  ssl_ciphers 	\"TLS13-AES-256-GCM-SHA384:TLS13-CHACHA20-POLY1305-SHA256:TLS13-AES-128-GCM-SHA256:TLS13-AES-128-CCM-8-SHA256:TLS13-AES-128-CCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA\";
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_dhparam /letsencrypt/letsencrypt/demo.pem;
+  ssl_prefer_server_ciphers on;
+  ssl_early_data on;
+  ssl_session_cache shared:SSL:10m;
+  ssl_ecdh_curve secp384r1;
 
-	ssl_stapling on;
-	ssl_stapling_verify on;
-	resolver 8.8.4.4 8.8.8.8 valid=300s;
-	resolver_timeout 10s;
+  ssl_stapling on;
+  ssl_stapling_verify on;
+  resolver 8.8.4.4 8.8.8.8 valid=300s;
+  resolver_timeout 10s;
 
-	#强制忽略缓存
-	add_header Cache-Control no-store,no-cache,must-revalidate,max-age=0;
+  #强制忽略缓存
+  add_header Cache-Control no-store,no-cache,must-revalidate,max-age=0;
 
-	#记录客户端真实ip
-	proxy_set_header X-Real-IP \$remote_addr;
-	proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+  #记录客户端真实ip
+  proxy_set_header X-Real-IP \$remote_addr;
+  proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
 
-	#隐藏某些关键的header
-	proxy_hide_header X-Powered-By;
-	proxy_hide_header ETag;
+  #隐藏某些关键的header
+  proxy_hide_header ETag;
+  proxy_hide_header X-Powered-By;
 
-	#允许跨域
-	add_header Access-Control-Allow-Origin '*';
-	add_header Access-Control-Allow-Credentials 'true';
-	add_header Access-Control-Allow-Methods '*';
-	add_header Access-Control-Allow-Headers '*';
+  #允许跨域
+  add_header Access-Control-Allow-Origin '*';
+  add_header Access-Control-Allow-Credentials 'true';
+  add_header Access-Control-Allow-Methods '*';
+  add_header Access-Control-Allow-Headers '*';
 
-	#不允许用框架、强制是使用https
-	add_header x-Content-Type-Options nosniff;
-	add_header X-Frame-Options deny;
-	add_header Strict-Transport-Security 'max-age=3153600000; includeSubDomains; preload;';
-	
-	#http3配置
-	add_header QUIC-Status $http3;
-	add_header Alt-Svc 'h3=\":443\"; ma=3153600000;quic=\":443\"; ma=3153600000; v=\"46,43\",h3-27=\":443\"; ma=3153600000,h3-25=\":443\"; ma=3153600000,h3-T050=\":443\"; ma=3153600000,h3-Q050=\":443\"; ma=3153600000,h3-Q049=\":443\"; ma=3153600000,h3-Q048=\":443\"; ma=3153600000,h3-Q046=\":443\"; ma=3153600000,h3-Q043=\":443\"; ma=3153600000';
+  #不允许用框架、强制是使用https
+  add_header X-Frame-Options deny;
+  add_header x-Content-Type-Options nosniff;
+  add_header Strict-Transport-Security 'max-age=315360000; includeSubDomains; preload;';
+
+  #http3配置
+  add_header QUIC-Status $http3;
+  add_header Alt-Svc 'h3=\":443\"; ma=315360000;quic=\":443\"; ma=315360000; v=\"46,43\",h3-27=\":443\"; ma=315360000,h3-25=\":443\"; ma=315360000,h3-T050=\":443\"; ma=315360000,h3-Q050=\":443\"; ma=315360000,h3-Q049=\":443\"; ma=315360000,h3-Q048=\":443\"; ma=315360000,h3-Q046=\":443\"; ma=315360000,h3-Q043=\":443\"; ma=315360000';
 }" > $nginx_install_path/nginx/conf/web/demo.conf
 
 #修改环境变量
