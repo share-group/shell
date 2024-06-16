@@ -3,13 +3,13 @@
 
 rm -rf /etc/yum.repos.d && mkdir -p /etc/yum.repos.d && cd /etc/yum.repos.d && echo "[baseos]
 name=CentOS Stream $releasever - BaseOS
-baseurl=https://mirrors.ustc.edu.cn/centos-stream/9-stream/BaseOS/$basearch/os/
+baseurl=https://mirrors.ustc.edu.cn/centos-stream/9-stream/BaseOS/\$basearch/os/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial
 [appstream]
 name=CentOS Stream $releasever - AppStream
-baseurl=https://mirrors.ustc.edu.cn/centos-stream/9-stream/AppStream/$basearch/os/
+baseurl=https://mirrors.ustc.edu.cn/centos-stream/9-stream/AppStream/\$basearch/os/
 gpgcheck=1
 enabled=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-centosofficial" > centos.repo
