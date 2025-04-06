@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.26.1 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.26.2 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.26.1 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.26.2 /usr/local'
 	exit
 fi
 
@@ -79,16 +79,25 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-openssl-3.1.5-quic1'
+openssl='openssl-openssl-3.1.7-quic1'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
-	wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
 	echo 'download '$openssl' finished...'
 fi
+if [ ! -d $nginx_install_path/openssl ]; then
+	echo 'installing '$openssl' ...'
+	if [ ! -f $base_path/$openssl.tar.gz ]; then
+		echo $openssl'.tar.gz is not exists, system will going to download it...'
+		wget -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
+		echo 'download '$openssl' finished...'
+	fi
+	tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+	cd $install_path/$openssl && ./config --prefix=$nginx_install_path/openssl no-shared && make && make -j $worker_processes && make install_sw || exit
+	echo $openssl' install finished...'
+fi
 
-#解压给nginx编译用
-rm -rf $install_path/$openssl
-cd $base_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
+rm -rf $install_path/$openssl && cd $install_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 
 #安装libatomic
 libatomic='libatomic_ops-1.1'
@@ -112,9 +121,60 @@ if [ ! -d $install_path/$geoip ]; then
 		echo 'download '$geoip' finished...'
 	fi
 	tar zxvf $base_path/$geoip.tar.gz -C $install_path || exit
-	cd $install_path/$geoip
-	./configure && make -j $worker_processes && make install || exit
+	cd $install_path/$geoip && ./configure && make -j $worker_processes && make install || exit
 fi
+
+#安装cmake
+cmake='cmake-3.30.3'
+if [ ! -d $nginx_install_path/cmake ]; then
+	echo 'installing '$cmake'...'
+	if [ ! -f $base_path/$cmake.tar.gz ]; then
+		echo $cmake'.tar.gz is not exists, system will going to download it...'
+		wget --no-check-certificate --no-cache -O $base_path/$cmake.tar.gz https://install.ruanzhijun.cn/$cmake.tar.gz || exit
+		echo 'download '$cmake' finished...'
+	fi
+	tar zxvf $base_path/$cmake.tar.gz -C $install_path || exit
+	cd $install_path/$cmake
+	./bootstrap --no-system-curl --prefix=$nginx_install_path/cmake && make -j $worker_processes && make install || exit
+	cd /usr/bin && ln -s $nginx_install_path/cmake/bin/cmake cmake && chmod 777 cmake || exit
+fi
+
+#安装go
+go='1.23.1'
+if [ ! -d $nginx_install_path/go ]; then
+	echo 'installing '$go'...'
+	if [ ! -f $base_path/go$go.linux-amd64.tar.gz ]; then
+		echo 'go'$go'.linux-amd64.tar.gz not exists, system will going to download it...'
+		wget --no-check-certificate --no-cache -O $base_path/go$go.linux-amd64.tar.gz https://install.ruanzhijun.cn/go$go.linux-amd64.tar.gz || exit
+		echo 'download '$go' finished...'
+	fi
+	tar zxvf $base_path/go$go.linux-amd64.tar.gz -C $nginx_install_path || exit
+	echo 'export PATH=$PATH:'$nginx_install_path'/go/bin' >> /etc/profile || exit
+	echo 'export GOROOT='$nginx_install_path'/go' >> /etc/profile || exit
+	echo 'export GOBIN=$GOROOT/bin' >> /etc/profile || exit
+	source /etc/profile || exit
+	go version
+	go env -w GO111MODULE=on
+	go env -w GOPROXY=https://goproxy.cn,direct
+fi
+
+# 安装boringssl
+boringssl='boringssl'
+if [ ! -f $base_path/$boringssl.tar.gz ]; then
+	echo $boringssl'.tar.gz is not exists, system will going to download it...'
+	wget --no-check-certificate --no-cache -O $base_path/$boringssl.tar.gz https://install.ruanzhijun.cn/$boringssl.tar.gz || exit
+	echo 'download '$boringssl' finished...'
+fi
+
+#编译boringssl
+mkdir -p $install_path/boringssl && tar zxvf $base_path/$boringssl.tar.gz -C $install_path/boringssl || exit
+cd $install_path/boringssl && mkdir -p $install_path/boringssl/build $install_path/boringssl/.openssl/lib $install_path/boringssl/.openssl/include || exit
+ln -sf $install_path/boringssl/include/openssl $install_path/boringssl/.openssl/include/openssl || exit
+touch $install_path/boringssl/.openssl/include/openssl/ssl.h || exit
+cmake -B$install_path/boringssl/build -H$install_path/boringssl || exit
+make -j $worker_processes -C $install_path/boringssl/build || exit
+cp $install_path/boringssl/build/crypto/libcrypto.a $install_path/boringssl/build/ssl/libssl.a $install_path/boringssl/.openssl/lib || exit
+
 
 ########## 增加nginx第三方模块：https://www.nginx.com/resources/wiki/modules/index.html ##########
 
@@ -145,8 +205,8 @@ if [ ! -d $nginx_install_path/nginx ]; then
 fi
 cd $install_path/$nginx
 
-# 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-ipv6 --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre --with-zlib=$install_path/$zlib --with-openssl=$install_path/$openssl --with-md5=/usr/lib --with-sha1=/usr/lib --with-md5-asm --with-sha1-asm --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+# 编译 --with-openssl=$install_path/$openssl
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=c++ --with-ld-opt="-Ljemalloc -Wl,-E" --with-cc-opt="-I../boringssl/include" --with-ld-opt="-L../boringssl/build/ssl -L../boringssl/build/crypto"  --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -297,14 +357,16 @@ wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shel
 wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.pem
 
 #下载GeoIp数据库
-geoip_version='20240604'
+geoip_asn_version='20240711'
+geoip_city_version='20240709'
+geoip_country_version='20240709'
 rm -rf /usr/share/GeoIP
-cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-ASN_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
-cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_version.tar.gz -C $install_path || exit
-cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
-mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-ASN_$geoip_version/GeoLite2-ASN.mmdb /usr/share/GeoIP/GeoLite2-ASN.mmdb || exit
-mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-City_$geoip_version/GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb || exit
-mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-ASN_$geoip_asn_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_asn_version.tar.gz -C $install_path || exit
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_city_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_city_version.tar.gz -C $install_path || exit
+cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_country_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_country_version.tar.gz -C $install_path || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-ASN_$geoip_asn_version/GeoLite2-ASN.mmdb /usr/share/GeoIP/GeoLite2-ASN.mmdb || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-City_$geoip_city_version/GeoLite2-City.mmdb /usr/share/GeoIP/GeoLite2-City.mmdb || exit
+mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_country_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
 
 #启动nginx
 yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/

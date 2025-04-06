@@ -1,4 +1,4 @@
-#linux docker
+#linux docker自动安装程序
 #运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/install-docker.sh && sh install-docker.sh
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -24,6 +24,8 @@ docker info || exit
 #echo 'Environment="HTTP_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
 #echo 'Environment="HTTPS_PROXY=http://127.0.0.1:7890/"' >> /etc/systemd/system/docker.service.d/proxy.conf
 #echo 'Environment="NO_PROXY=localhost,127.0.0.1,.docker.com"' >> /etc/systemd/system/docker.service.d/proxy.conf
+
+#docker加速：https://blog.csdn.net/qq_34777982/article/details/140236429
 
 #解决docker日志过大的问题
 mkdir -p /etc/docker

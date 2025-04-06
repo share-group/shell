@@ -1,5 +1,5 @@
 #linux clash
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-clash.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-clash.sh && sh install-clash.sh 1.11.4 /usr/local/clash
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-clash.sh && wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/install-clash.sh && sh install-clash.sh 1.11.4 /usr/local/clash
  
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -26,7 +26,7 @@ if [ ! -d $install_path/$clash ]; then
 	echo 'installing '$clash' ...'
 	if [ ! -f $base_path/$clash ]; then
 		echo $clash' is not exists, system will going to download it...'
-		wget -O $base_path/$clash https://install.ruanzhijun.cn/$clash || exit
+		wget --no-check-certificate --no-cache -O $base_path/$clash https://install.ruanzhijun.cn/$clash || exit
 		echo 'download '$clash' finished...'
 	fi
 fi
@@ -38,9 +38,9 @@ cd /usr/bin && rm -rf clash && ln -s $clash_install_path/bin/clash clash && chmo
 clash -v
 
 #下载GeoIp数据库
-geoip_version='20230616'
+geoip_version='20250314'
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
-mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget -O config.yaml https://install.ruanzhijun.cn/config.yaml && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb ./Country.mmdb || exit
+mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget --no-check-certificate --no-cache -O config.yaml https://install.ruanzhijun.cn/config.yaml && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb ./Country.mmdb || exit
 
 #加入系统服务
 echo '[Unit]' > /etc/systemd/system/clash.service
@@ -55,8 +55,9 @@ echo 'WantedBy=multi-user.target' >> /etc/systemd/system/clash.service
 systemctl daemon-reload && systemctl enable clash && systemctl restart clash && systemctl status clash
 
 #安装图形界面
+mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 22.14.0 /usr/local
 cd $clash_install_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/clash-dashboard-master.zip || exit
-cd $clash_install_path && unzip clash-dashboard-master.zip && cd clash-dashboard-master && npm --registry https://registry.npm.taobao.org i --force && npm run build || exit
+cd $clash_install_path && unzip clash-dashboard-master.zip && cd clash-dashboard-master && npm --registry https://registry.npmmirror.com i --force && npm run build || exit
 cd $clash_install_path && cp -rf clash-dashboard-master/dist ./dashboard && rm -rf clash-dashboard-master* || exit
 
 #测试vpn是否成功
