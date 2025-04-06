@@ -56,6 +56,7 @@ systemctl daemon-reload && systemctl enable clash && systemctl restart clash && 
 
 #安装图形界面
 mkdir -p /shell && cd /shell && rm -rf install-nodejs.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-nodejs.sh && sh install-nodejs.sh 22.14.0 /usr/local
+source /etc/profile
 cd $clash_install_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/clash-dashboard-master.zip || exit
 cd $clash_install_path && unzip clash-dashboard-master.zip && cd clash-dashboard-master && npm --registry https://registry.npmmirror.com i --force && npm run build || exit
 cd $clash_install_path && cp -rf clash-dashboard-master/dist ./dashboard && rm -rf clash-dashboard-master* || exit
