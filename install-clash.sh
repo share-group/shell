@@ -38,7 +38,7 @@ cd /usr/bin && rm -rf clash && ln -s $clash_install_path/bin/clash clash && chmo
 clash -v
 
 #下载GeoIp数据库
-geoip_version='20250314'
+geoip_version='20250411'
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-Country_$geoip_version.tar.gz && tar zxvf $base_path/GeoLite2-Country_$geoip_version.tar.gz -C $install_path || exit
 mkdir -p $clash_config_path && cd $clash_config_path && rm -rf config.yaml Country.mmdb && wget --no-check-certificate --no-cache -O config.yaml https://install.ruanzhijun.cn/config.yaml && cp -rf $install_path/GeoLite2-Country_$geoip_version/GeoLite2-Country.mmdb ./Country.mmdb || exit
 

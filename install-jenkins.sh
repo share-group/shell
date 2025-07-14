@@ -30,7 +30,7 @@ if [ ! -d $install_path/$jenkins ]; then
 fi
 
 #查询cpu逻辑个数
-cpus=$(nproc --all)
+cpus=$(cat /proc/cpuinfo | grep "processor" | wc -l)
 
 thread=`expr 4 \* $cpus`
 
