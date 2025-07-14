@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep "processor" | wc -l) #查询cpu逻辑个数
-dnf -y install lrzsz vim gcc gcc-c++ make openssl-devel perl-core patch unzip tar bzip2
+dnf -y install lrzsz vim gcc gcc-c++ make perl-core patch unzip tar bzip2 || DEBIAN_FRONTEND=noninteractive apt install -yq lrzsz vim gcc g++ make libssl-dev perl patch unzip tar bzip2
 
 #建立临时安装目录
 echo 'preparing working path...'
