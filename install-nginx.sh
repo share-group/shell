@@ -166,7 +166,8 @@ worker_rlimit_nofile "$ulimit";
 
 events {
   use epoll;
-  accept_mutex off;
+  multi_accept on;
+  accept_mutex on;
   worker_connections "$ulimit";
 }
 
