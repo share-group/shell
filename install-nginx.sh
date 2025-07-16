@@ -168,6 +168,7 @@ events {
   use epoll;
   multi_accept on;
   accept_mutex on;
+  accept_mutex_delay 100ms;
   worker_connections "$ulimit";
 }
 
