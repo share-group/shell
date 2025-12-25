@@ -35,7 +35,6 @@ cd harbor
 # 7️⃣ 自动创建虚拟证书文件，避免 prepare 报错
 SSL_DIR="$root/harbor/ssl"
 mkdir -p ${SSL_DIR}
-openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -keyout ${SSL_DIR}/server.key -out ${SSL_DIR}/server.crt -subj "/C=CN/ST=Beijing/L=Beijing/O=MyCompany/OU=IT/CN=${INTERNAL_IP}"
 
 # 生成 harbor.yml
 echo ">>> Generate harbor.yml for HTTP-only..."
@@ -49,7 +48,7 @@ http:
   port: $HARBOR_HTTP_PORT
 
 https:
-  port: 18088
+  port: 443
   certificate: $SSL_DIR/server.crt
   private_key: $SSL_DIR/server.key
 
