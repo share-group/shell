@@ -1,5 +1,5 @@
 #linux mongodb自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mongodb.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-mongodb.sh && sh install-mongodb.sh 4.2.6 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-mongodb.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-mongodb.sh && sh install-mongodb.sh 4.2.6 /usr/local
  
 #定义本程序的当前目录
 base_path=$(pwd)

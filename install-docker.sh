@@ -1,5 +1,5 @@
 #linux docker自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/install-docker.sh && sh install-docker.sh
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-docker.sh && sh install-docker.sh
 #定义本程序的当前目录
 base_path=$(pwd)
 

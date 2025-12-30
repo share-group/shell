@@ -1,5 +1,5 @@
 #linux 切换yum源
-#运行例子：mkdir -p /shell && cd /shell && rm -rf switch-yum-source.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/switch-yum-source.sh && sh switch-yum-source.sh
+#运行例子：mkdir -p /shell && cd /shell && rm -rf switch-yum-source.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/switch-yum-source.sh && sh switch-yum-source.sh
 
 rm -rf /etc/yum.repos.d && mkdir -p /etc/yum.repos.d && cd /etc/yum.repos.d && echo "[baseos]
 name=CentOS Stream \$releasever - BaseOS

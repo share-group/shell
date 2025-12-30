@@ -1,5 +1,5 @@
 #linux ollama自动安装程序 
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-ollama.sh && wget --no-cache https://raw.staticdn.net/share-group/shell/master/install-ollama.sh && sh install-ollama.sh
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-ollama.sh && wget --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-ollama.sh && sh install-ollama.sh
 
 set -eu
 

@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontents.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.28.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.28.0 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep "processor" | wc -l) #查询cpu逻辑个数
-dnf -y install lrzsz vim gcc gcc-c++ make perl-core patch unzip tar bzip2 || DEBIAN_FRONTEND=noninteractive apt install -yq lrzsz vim gcc g++ make libssl-dev perl patch unzip tar bzip2
+dnf -y install lrzsz vim gcc gcc-c++ make perl-core patch unzip tar bzip2 || DEBIAN_FRONTEND=noninteractive apt install -yq lrzsz vim gcc g++ make libssl-dev perl patch unzip tar bzip2 chrony
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -301,8 +301,8 @@ $(source /etc/profile)
 #复制demo https证书
 mkdir -p /letsencrypt/letsencrypt/
 cd /letsencrypt/letsencrypt/
-wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.cer
-wget --no-check-certificate --no-cache https://raw.staticdn.net/share-group/shell/master/cert/demo.key
+wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.cer
+wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.key
 
 #下载GeoIp数据库
 geoip_asn_version='20250713'
