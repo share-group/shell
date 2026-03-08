@@ -12,45 +12,41 @@ fi
 #建立临时安装目录
 echo 'preparing working path...'
 install_path='/install'
+
+#建立安装目录
 rm -rf $install_path $gitlab_install_path/gitlab
 mkdir -p $install_path
 mkdir -p $gitlab_install_path/gitlab/data
 mkdir -p $gitlab_install_path/gitlab/logs
 mkdir -p $gitlab_install_path/gitlab/config
+cat > $gitlab_install_path/gitlab/docker-compose.yml <<EOF
+version: '3.8'
 
-#拉取镜像
-docker pull gitlab/gitlab-ce
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    restart: always
+    hostname: gitlab.ruanzhijun.cn
+    shm_size: '256m'
+    ports:
+      - "80:80"
+      - "443:443"
+      - "2222:22"
+    volumes:
+      - $gitlab_install_path/gitlab/config:/etc/gitlab
+      - $gitlab_install_path/gitlab/logs:/var/log/gitlab
+      - $gitlab_install_path/gitlab/data:/var/opt/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.ruanzhijun.cn'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+        nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab.example.com.crt"
+		nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab.example.com.key"
+        #letsencrypt['enable'] = true
+        #letsencrypt['contact_emails'] = ['ruanzhijun@ruanzhijun.cn']
+EOF
+cd $gitlab_install_path/gitlab && docker compose up -d
 
-#启动gitlab
-docker run -d --name gitlab -p 10080:80 --restart always -v $gitlab_install_path/gitlab/config:/etc/gitlab -v $gitlab_install_path/gitlab/logs:/var/log/gitlab -v $gitlab_install_path/gitlab/data:/var/opt/gitlab gitlab/gitlab-ce
-
-# 可能需要设置防火墙
-# *nat
-# :PREROUTING ACCEPT [27:11935]
-# :INPUT ACCEPT [0:0]
-# :OUTPUT ACCEPT [598:57368]
-# :POSTROUTING ACCEPT [591:57092]
-# :DOCKER - [0:0]
-# -A PREROUTING -m addrtype --dst-type LOCAL -j DOCKER
-# -A OUTPUT ! -d 127.0.0.0/8 -m addrtype --dst-type LOCAL -j DOCKER
-# -A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE
-# COMMIT
-# *filter
-# :INPUT ACCEPT [0:0]
-# :FORWARD ACCEPT [0:0]
-# :OUTPUT ACCEPT [0:0]
-# :DOCKER - [0:0]
-# -A FORWARD -o docker0 -j DOCKER
-# -A FORWARD -o docker0 -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
-# -A FORWARD -i docker0 ! -o docker0 -j ACCEPT
-# -A FORWARD -i docker0 -o docker0 -j ACCEPT
-# -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-# -A INPUT -p icmp -j ACCEPT
-# -A INPUT -i lo -j ACCEPT
-# -A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT
-# -A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
-# -A INPUT -p tcp -m state --state NEW -m tcp --dport 500 -j ACCEPT
-# -A INPUT -p tcp -m state --state NEW -m tcp --dport 4500 -j ACCEPT
-# -A INPUT -j REJECT --reject-with icmp-host-prohibited
-# -A FORWARD -j REJECT --reject-with icmp-host-prohibited
-# COMMIT
+#获取初始密码：docker exec -it gitlab cat /etc/gitlab/initial_root_password
+#更新https证书：docker exec -it gitlab gitlab-ctl reconfigure

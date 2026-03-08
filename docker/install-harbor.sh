@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
-set -e
-
+#linux docker自动安装程序
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-docker.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/docker/install-harbor.sh && sh install-harbor.sh
+#定义本程序的当前目录
 root=$(pwd)
 
 ### ================== 可修改参数 ==================
