@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.28.0 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.30.1 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.28.0 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.30.1 /usr/local'
 	exit
 fi
 
@@ -23,7 +23,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载zlib
-zlib='zlib-1.3.1'
+zlib='zlib-1.3.2'
 if [ ! -d $install_path/$zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
@@ -73,7 +73,7 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 fi
 
 #安装jemalloc
-jemalloc='jemalloc-5.3.0'
+jemalloc='jemalloc-5.3.1'
 if [ ! -d $nginx_install_path/jemalloc ]; then
 	if [ ! -d $install_path/$jemalloc ]; then
 		echo 'installing '$jemalloc' ...'
@@ -91,7 +91,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.5.1'
+openssl='openssl-3.5.6'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
