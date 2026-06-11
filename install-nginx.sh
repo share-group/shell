@@ -91,7 +91,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.5.6'
+openssl='openssl-3.5.7'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
@@ -138,6 +138,18 @@ cd $install_path/ngx_brotli/deps && rm -rf brotli && wget --no-check-certificate
 #文件合并：https://github.com/alibaba/nginx-http-concat
 wget --no-check-certificate --no-cache -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
 cd $install_path && unzip nginx-http-concat.zip && mv nginx-http-concat-master nginx-http-concat || exit
+
+#下载openresty，里面有很多第三方模块
+openresty='openresty-1.31.1.1'
+if [ ! -d $install_path/$openresty ]; then
+	echo 'installing '$openresty' ...'
+	if [ ! -f $base_path/$openresty.tar.gz ]; then
+		echo $openresty'.tar.gz is not exists, system will going to download it...'
+		wget --no-check-certificate --no-cache -O $base_path/$openresty.tar.gz https://install.ruanzhijun.cn/$openresty.tar.gz || exit
+		echo 'download '$openresty' finished...'
+	fi
+	tar zxvf $base_path/$openresty.tar.gz -C $install_path || exit
+fi
 
 
 #安装nginx
