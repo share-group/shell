@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.30.1 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.30.2 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.30.1 /usr/local'
+	echo 'for example: sh install-nginx.sh 1.30.2 /usr/local'
 	exit
 fi
 
@@ -47,7 +47,7 @@ if [ ! -d $install_path/$zlib ]; then
 fi
 
 #下载pcre
-pcre='pcre-8.45'
+pcre='pcre2-10.47'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...' 
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -60,7 +60,7 @@ fi
 
 #安装libiconv
 if [ ! -d $nginx_install_path/libiconv ]; then
-	libiconv='libiconv-1.17'
+	libiconv='libiconv-1.18'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
 		wget --no-check-certificate --no-cache -O $base_path/$libiconv.tar.gz https://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
@@ -100,7 +100,7 @@ fi
 rm -rf $install_path/$openssl && cd $install_path && tar zxvf $base_path/$openssl.tar.gz -C $install_path || exit
 
 #安装libatomic
-libatomic='libatomic_ops-1.1'
+libatomic='libatomic_ops-7.10.0'
 if [ ! -d $install_path/$libatomic ]; then
 	echo 'installing '$libatomic' ...'
 	if [ ! -f $base_path/$libatomic.tar.gz ]; then
@@ -112,7 +112,7 @@ if [ ! -d $install_path/$libatomic ]; then
 fi
 
 #安装libmaxminddb
-geoip='libmaxminddb-1.12.2'
+geoip='libmaxminddb-1.13.3'
 if [ ! -d $install_path/$geoip ]; then
 	echo 'installing '$geoip' ...'
 	if [ ! -f $base_path/$geoip.tar.gz ]; then
@@ -139,19 +139,6 @@ cd $install_path/ngx_brotli/deps && rm -rf brotli && wget --no-check-certificate
 wget --no-check-certificate --no-cache -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
 cd $install_path && unzip nginx-http-concat.zip && mv nginx-http-concat-master nginx-http-concat || exit
 
-#下载openresty，里面有很多第三方模块
-openresty='openresty-1.31.1.1'
-if [ ! -d $install_path/$openresty ]; then
-	echo 'installing '$openresty' ...'
-	if [ ! -f $base_path/$openresty.tar.gz ]; then
-		echo $openresty'.tar.gz is not exists, system will going to download it...'
-		wget --no-check-certificate --no-cache -O $base_path/$openresty.tar.gz https://install.ruanzhijun.cn/$openresty.tar.gz || exit
-		echo 'download '$openresty' finished...'
-	fi
-	tar zxvf $base_path/$openresty.tar.gz -C $install_path || exit
-fi
-
-
 #安装nginx
 nginx='nginx-'$nginx_version
 echo 'installing '$nginx' ...'
@@ -166,7 +153,7 @@ fi
 cd $install_path/$nginx
 
 # 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=gcc --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-openssl=$install_path/$openssl --with-openssl-opt=enable-tls1_3 --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat --with-libatomic=$install_path/$libatomic && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=gcc --with-cc-opt=-O2 --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-openssl=$install_path/$openssl --with-openssl-opt=enable-tls1_3 --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -308,7 +295,7 @@ server {
 #修改环境变量
 echo 'modify /etc/profile...'
 echo "ulimit -SHn "$ulimit >> /etc/profile
-$(source /etc/profile)
+. /etc/profile
 
 #复制demo https证书
 mkdir -p /letsencrypt/letsencrypt/
@@ -317,9 +304,9 @@ wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-g
 wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/cert/demo.key
 
 #下载GeoIp数据库
-geoip_asn_version='20250713'
-geoip_city_version='20250711'
-geoip_country_version='20250711'
+geoip_asn_version='20260612'
+geoip_city_version='20260612'
+geoip_country_version='20260612'
 rm -rf /usr/share/GeoIP
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-ASN_$geoip_asn_version.tar.gz && tar zxvf $base_path/GeoLite2-ASN_$geoip_asn_version.tar.gz -C $install_path || exit
 cd $base_path && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/GeoLite2-City_$geoip_city_version.tar.gz && tar zxvf $base_path/GeoLite2-City_$geoip_city_version.tar.gz -C $install_path || exit
@@ -336,6 +323,5 @@ nginx
 echo '' >> /etc/rc.d/rc.local
 echo 'systemctl stop firewalld' >> /etc/rc.d/rc.local
 echo 'nginx' >> /etc/rc.d/rc.local
-$(source /etc/rc.d/rc.local)
 
 # Nginx内核参数优化 https://www.cnblogs.com/suihui/p/3799683.html#id23
