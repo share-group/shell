@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && sh install-nginx.sh 1.30.2 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && chmod 777 install-nginx.sh && sh install-nginx.sh 1.30.2 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -14,7 +14,7 @@ if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep "processor" | wc -l) #查询cpu逻辑个数
-dnf -y install lrzsz vim gcc gcc-c++ make perl-core patch unzip tar bzip2 || DEBIAN_FRONTEND=noninteractive apt install -yq lrzsz vim gcc g++ make libssl-dev perl patch unzip tar bzip2 chrony
+dnf -y install lrzsz vim gcc gcc-c++ make perl-core patch unzip tar bzip2 curl wget || DEBIAN_FRONTEND=noninteractive apt install -yq lrzsz vim gcc g++ make libssl-dev perl patch unzip tar bzip2 chrony curl wget
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -41,7 +41,7 @@ if [ ! -d $install_path/$zlib ]; then
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.a libz.a
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so libz.so
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1 libz.so.1
-	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.3.1 libz.so.1.3.1
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.3.2 libz.so.1.3.2
 	echo $nginx_install_path"/zlib/lib" >> /etc/ld.so.conf
 	ldconfig
 fi
@@ -124,7 +124,45 @@ if [ ! -d $install_path/$geoip ]; then
 	cd $install_path/$geoip && ./configure && make -j $worker_processes && make install || exit
 fi
 
-########## 增加nginx第三方模块：https://www.nginx.com/resources/wiki/modules/index.html ##########
+#下载openresty，集成lua能力
+openresty='openresty-1.31.1.1'
+if [ ! -d $install_path/$openresty ]; then
+	echo 'installing '$openresty' ...'
+	if [ ! -f $base_path/$openresty.tar.gz ]; then
+		echo $openresty'.tar.gz is not exists, system will going to download it...'
+		wget --no-check-certificate --no-cache -O $base_path/$openresty.tar.gz https://install.ruanzhijun.cn/$openresty.tar.gz || exit
+		echo 'download '$openresty' finished...'
+	fi
+	tar zxvf $base_path/$openresty.tar.gz -C $install_path || exit
+fi
+
+#安装LuaJIT
+luaJit='LuaJIT-2.1-20260415'
+cd $install_path/$openresty/bundle/$luaJit && make -j $worker_processes && make install || exit
+echo 'export LUAJIT_LIB=/usr/local/lib' >> /etc/profile || exit
+echo 'export LUAJIT_INC=/usr/local/include/luajit-2.1' >> /etc/profile || exit
+. /etc/profile || exit
+
+#安装lua-cjson
+cjson='lua-cjson-2.1.0.17'
+cd $install_path/$openresty/bundle/$cjson && make CFLAGS="-fPIC -I/usr/local/include/luajit-2.1" -j $worker_processes && make install || exit
+if find /usr/local | grep -q "cjson"; then
+    :
+else
+    echo "cjson install fail"
+    echo "make CFLAGS=\"-fPIC -I/usr/local/include/luajit-2.1\" -j $worker_processes && make install"
+    exit 1
+fi
+
+#安装lua-resty-core
+lua_resty_core='lua-resty-core-0.1.34rc3'
+cd $install_path/$openresty/bundle/$lua_resty_core && make -j $worker_processes && make install || exit
+lua_package_path='/usr/local/lib/lua/?.lua;/usr/local/lib/lua/?/init.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua;;'
+lua_package_cpath='/usr/local/lib/lua/?.so;/usr/local/lib/lua/5.1/?.so;;'
+
+#安装lua-resty-lrucache
+lua_resty_lrucache='lua-resty-lrucache-0.15'
+cd $install_path/$openresty/bundle/$lua_resty_lrucache && make -j $worker_processes && make install || exit
 
 #geoip2：https://github.com/leev/ngx_http_geoip2_module
 wget --no-check-certificate --no-cache -O $install_path/ngx_http_geoip2_module.zip https://install.ruanzhijun.cn/ngx_http_geoip2_module.zip || exit
@@ -134,10 +172,6 @@ cd $install_path && unzip ngx_http_geoip2_module.zip && mv ngx_http_geoip2_modul
 wget --no-check-certificate --no-cache -O $install_path/ngx_brotli.zip https://install.ruanzhijun.cn/ngx_brotli.zip || exit
 cd $install_path && unzip ngx_brotli.zip && mv ngx_brotli-master ngx_brotli || exit
 cd $install_path/ngx_brotli/deps && rm -rf brotli && wget --no-check-certificate --no-cache https://install.ruanzhijun.cn/brotli.zip && unzip brotli.zip && mv brotli-master brotli || exit
-
-#文件合并：https://github.com/alibaba/nginx-http-concat
-wget --no-check-certificate --no-cache -O $install_path/nginx-http-concat.zip https://install.ruanzhijun.cn/nginx-http-concat.zip || exit
-cd $install_path && unzip nginx-http-concat.zip && mv nginx-http-concat-master nginx-http-concat || exit
 
 #安装nginx
 nginx='nginx-'$nginx_version
@@ -152,8 +186,22 @@ if [ ! -d $nginx_install_path/nginx ]; then
 fi
 cd $install_path/$nginx
 
+#系统参数调优
+echo "net.core.somaxconn = 65535
+net.ipv4.tcp_max_syn_backlog = 65535
+net.core.netdev_max_backlog = 65535
+net.ipv4.ip_local_port_range = 1024 65535
+net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_buckets = 5000
+vm.swappiness = 0
+fs.file-max = 2097152
+fs.inotify.max_user_watches = 524288" >> /etc/sysctl.conf || exit
+echo "* soft nofile 200000
+* hard nofile 200000" >> /etc/security/limits.conf || exit
+
 # 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=gcc --with-cc-opt=-O2 --with-ld-opt="-Ljemalloc -Wl,-E" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-openssl=$install_path/$openssl --with-openssl-opt=enable-tls1_3 --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-compat --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/nginx-http-concat && sed -i 's/-Werror//' $install_path/$nginx/objs/Makefile && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=gcc --with-cc-opt=-O2 --with-ld-opt="-Ljemalloc -Wl,-E,-rpath,/usr/local/lib" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-openssl=$install_path/$openssl --with-openssl-opt="enable-tls1_3 no-tests" --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/$openresty/bundle/ngx_devel_kit-0.3.4 --add-module=$install_path/$openresty/bundle/echo-nginx-module-0.64 --add-module=$install_path/$openresty/bundle/xss-nginx-module-0.07 --add-module=$install_path/$openresty/bundle/ngx_coolkit-0.2 --add-module=$install_path/$openresty/bundle/set-misc-nginx-module-0.33 --add-module=$install_path/$openresty/bundle/form-input-nginx-module-0.12 --add-module=$install_path/$openresty/bundle/encrypted-session-nginx-module-0.09 --add-module=$install_path/$openresty/bundle/srcache-nginx-module-0.33 --add-module=$install_path/$openresty/bundle/ngx_lua-0.10.31rc5 --add-module=$install_path/$openresty/bundle/ngx_lua_upstream-0.08 --add-module=$install_path/$openresty/bundle/headers-more-nginx-module-0.39 --add-module=$install_path/$openresty/bundle/array-var-nginx-module-0.06 --add-module=$install_path/$openresty/bundle/memc-nginx-module-0.20 --add-module=$install_path/$openresty/bundle/redis2-nginx-module-0.15 --add-module=$install_path/$openresty/bundle/redis-nginx-module-0.41 --add-module=$install_path/$openresty/bundle/rds-json-nginx-module-0.17 --add-module=$install_path/$openresty/bundle/rds-csv-nginx-module-0.10 --add-module=$install_path/$openresty/bundle/ngx_stream_lua-0.0.19rc4 && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
@@ -174,15 +222,23 @@ events {
 http {
   include mime.types;
   charset utf-8;
-  default_type application/octet-stream;
-  access_log off;
+  default_type application/json;
+  #access_log off;
   error_log "$nginx_install_path"/nginx/logs/error.log crit;
   sendfile on;
   tcp_nopush on;
   tcp_nodelay on;
   keepalive_timeout 60;
   client_header_buffer_size 32k;
-  client_max_body_size 200m;
+  client_max_body_size 10m;
+  
+  #加载lua相关
+  lua_package_path \"$lua_package_path\"; 
+  lua_package_cpath \"$lua_package_cpath\"; 
+  init_by_lua_block { 
+	require \"resty.core\" 
+	cjson = require \"cjson\" 
+  }
 
   fastcgi_connect_timeout 600;
   fastcgi_send_timeout 600;
@@ -216,7 +272,7 @@ http {
   }
 
   geoip2 /usr/share/GeoIP/GeoLite2-Country.mmdb {
-  auto_reload 5m;
+    auto_reload 5m;
     \$geoip2_country_code source = \$remote_addr country iso_code;
     \$geoip2_country_name_en source = \$remote_addr country names en;
   }
@@ -231,7 +287,7 @@ echo 'create nginx.conf finished...'
 #创建网站文件存放目录
 echo 'create "www" root...'
 web_root='www'
-mv $nginx_install_path/nginx/html $nginx_install_path/nginx/$web_root
+mv $nginx_install_path/nginx/html $nginx_install_path/nginx/$web_root && mkdir $nginx_install_path/nginx/html
 
 #创建一个demo配置文件
 echo 'create a demo conf , demo.conf...'
@@ -316,12 +372,10 @@ mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-City_$geoip_city_vers
 mkdir -p /usr/share/GeoIP && cp -rf $install_path/GeoLite2-Country_$geoip_country_version/GeoLite2-Country.mmdb /usr/share/GeoIP/GeoLite2-Country.mmdb || exit
 
 #启动nginx
-yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin/
+yes|cp -rf $nginx_install_path/nginx/sbin/nginx /usr/bin
 nginx
 
 #开机自启动
 echo '' >> /etc/rc.d/rc.local
 echo 'systemctl stop firewalld' >> /etc/rc.d/rc.local
 echo 'nginx' >> /etc/rc.d/rc.local
-
-# Nginx内核参数优化 https://www.cnblogs.com/suihui/p/3799683.html#id23
