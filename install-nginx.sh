@@ -229,8 +229,9 @@ http {
   tcp_nopush on;
   tcp_nodelay on;
   keepalive_timeout 60;
-  client_header_buffer_size 32k;
-  client_max_body_size 10m;
+  client_body_buffer_size 32k;
+  client_header_buffer_size 2m;
+  client_max_body_size 2m;
   
   #加载lua相关
   lua_package_path \"$lua_package_path\"; 
