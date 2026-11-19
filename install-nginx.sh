@@ -9,12 +9,12 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh  /usr/local'
+	echo 'for example: sh install-nginx.sh 1.30.7 /usr/local'
 	exit
 fi
 
 worker_processes=$(cat /proc/cpuinfo | grep "processor" | wc -l) #查询cpu逻辑个数
-dnf -y install lrzsz vim gcc gcc-c++ make perl-core patch unzip tar bzip2 curl wget || DEBIAN_FRONTEND=noninteractive apt install -yq lrzsz vim gcc g++ make libssl-dev perl patch unzip tar bzip2 chrony curl wget
+dnf -y install lrzsz vim gcc gcc-c++ make perl-core pkgconf-pkg-config patch unzip tar bzip2 curl wget || DEBIAN_FRONTEND=noninteractive apt update -y && apt install -yq lrzsz vim pkg-config gcc g++ make libssl-dev perl patch unzip tar bzip2 chrony curl wget
 
 #建立临时安装目录
 echo 'preparing working path...'
@@ -33,7 +33,7 @@ if [ ! -d $install_path/$zlib ]; then
 	fi
 	tar zxvf $base_path/$zlib.tar.gz -C $install_path || exit
 	cd $install_path/$zlib
-	./configure --prefix=$nginx_install_path/zlib --shared && make -j $worker_processes && make test && make install || exit
+	CC=gcc ./configure --prefix=$nginx_install_path/zlib --shared && make -j $worker_processes && make test && make install || exit
 	cp $install_path/$zlib/zutil.h /usr/local/include
 	cp $install_path/$zlib/zutil.c /usr/local/include
 	cp $nginx_install_path/zlib/include/zlib.h /usr/local/include
@@ -201,7 +201,7 @@ echo "* soft nofile 200000
 * hard nofile 200000" >> /etc/security/limits.conf || exit
 
 # 编译
-./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=gcc --with-cc-opt=-O2 --with-ld-opt="-Ljemalloc -Wl,-E,-rpath,/usr/local/lib" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-openssl=$install_path/$openssl --with-openssl-opt="enable-tls1_3 no-tests" --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/$openresty/bundle/ngx_devel_kit-0.3.4 --add-module=$install_path/$openresty/bundle/echo-nginx-module-0.64 --add-module=$install_path/$openresty/bundle/xss-nginx-module-0.07 --add-module=$install_path/$openresty/bundle/ngx_coolkit-0.2 --add-module=$install_path/$openresty/bundle/set-misc-nginx-module-0.33 --add-module=$install_path/$openresty/bundle/form-input-nginx-module-0.12 --add-module=$install_path/$openresty/bundle/encrypted-session-nginx-module-0.09 --add-module=$install_path/$openresty/bundle/srcache-nginx-module-0.33 --add-module=$install_path/$openresty/bundle/ngx_lua-0.10.31rc5 --add-module=$install_path/$openresty/bundle/ngx_lua_upstream-0.08 --add-module=$install_path/$openresty/bundle/headers-more-nginx-module-0.39 --add-module=$install_path/$openresty/bundle/array-var-nginx-module-0.06 --add-module=$install_path/$openresty/bundle/memc-nginx-module-0.20 --add-module=$install_path/$openresty/bundle/redis2-nginx-module-0.15 --add-module=$install_path/$openresty/bundle/redis-nginx-module-0.41 --add-module=$install_path/$openresty/bundle/rds-json-nginx-module-0.17 --add-module=$install_path/$openresty/bundle/rds-csv-nginx-module-0.10 --add-module=$install_path/$openresty/bundle/ngx_stream_lua-0.0.19rc4 && make -j $worker_processes && make install || exit
+./configure --prefix=$nginx_install_path/nginx --user=root --group=root --with-cc=gcc --with-cc-opt=-O2 --with-ld-opt="-Ljemalloc -Wl,-E,-rpath,/usr/local/lib" --with-http_stub_status_module --with-http_v2_module --with-http_v3_module --with-select_module --with-poll_module --with-file-aio --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module --with-pcre=$install_path/$pcre --with-openssl=$install_path/$openssl --with-openssl-opt="enable-tls1_3 no-tests" --with-zlib=$install_path/$zlib --with-mail --with-threads --with-mail_ssl_module --with-http_realip_module --with-http_addition_module --with-stream_ssl_preread_module --with-http_dav_module --with-http_flv_module --with-http_mp4_module --with-http_gunzip_module --with-http_random_index_module --with-http_slice_module --with-http_secure_link_module --with-http_degradation_module --with-http_auth_request_module --with-http_stub_status_module --with-stream --with-stream_ssl_module --with-libatomic=$install_path/$libatomic --add-module=$install_path/ngx_http_geoip2_module --add-module=$install_path/ngx_brotli --add-module=$install_path/$openresty/bundle/ngx_devel_kit-0.3.6 --add-module=$install_path/$openresty/bundle/echo-nginx-module-0.65 --add-module=$install_path/$openresty/bundle/xss-nginx-module-0.07 --add-module=$install_path/$openresty/bundle/ngx_coolkit-0.2 --add-module=$install_path/$openresty/bundle/set-misc-nginx-module-0.34 --add-module=$install_path/$openresty/bundle/form-input-nginx-module-0.12 --add-module=$install_path/$openresty/bundle/encrypted-session-nginx-module-0.10 --add-module=$install_path/$openresty/bundle/srcache-nginx-module-0.34 --add-module=$install_path/$openresty/bundle/ngx_lua-0.10.32rc7 --add-module=$install_path/$openresty/bundle/ngx_lua_upstream-0.08 --add-module=$install_path/$openresty/bundle/headers-more-nginx-module-0.40 --add-module=$install_path/$openresty/bundle/array-var-nginx-module-0.06 --add-module=$install_path/$openresty/bundle/memc-nginx-module-0.21 --add-module=$install_path/$openresty/bundle/redis2-nginx-module-0.15 --add-module=$install_path/$openresty/bundle/redis-nginx-module-0.41 --add-module=$install_path/$openresty/bundle/rds-json-nginx-module-0.17 --add-module=$install_path/$openresty/bundle/rds-csv-nginx-module-0.10 --add-module=$install_path/$openresty/bundle/ngx_stream_lua-0.0.20rc3 && make -j $worker_processes && make install || exit
 
 #写入nginx配置文件
 echo 'create nginx.conf...'
