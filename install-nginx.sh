@@ -1,5 +1,5 @@
 #linux nginx自动安装程序
-#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && chmod 777 install-nginx.sh && sh install-nginx.sh 1.30.2 /usr/local
+#运行例子：mkdir -p /shell && cd /shell && rm -rf install-nginx.sh && wget --no-check-certificate --no-cache https://raw.githubusercontent.com/share-group/shell/master/install-nginx.sh && chmod 777 install-nginx.sh && sh install-nginx.sh 1.30.7 /usr/local
 
 #定义本程序的当前目录
 base_path=$(pwd)
@@ -9,7 +9,7 @@ nginx_version=$1
 nginx_install_path=$2
 if [ ! $nginx_version ] || [ ! $nginx_install_path ]; then
 	echo 'error command!!! you must input nginx version and install path...'
-	echo 'for example: sh install-nginx.sh 1.30.2 /usr/local'
+	echo 'for example: sh install-nginx.sh  /usr/local'
 	exit
 fi
 
@@ -23,7 +23,7 @@ rm -rf $install_path
 mkdir -p $install_path
 
 #下载zlib
-zlib='zlib-1.3.2'
+zlib='zlib-1.4'
 if [ ! -d $install_path/$zlib ]; then
 	echo 'installing '$zlib' ...'
 	if [ ! -f $base_path/$zlib.tar.gz ]; then
@@ -41,13 +41,13 @@ if [ ! -d $install_path/$zlib ]; then
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.a libz.a
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so libz.so
 	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1 libz.so.1
-	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.3.2 libz.so.1.3.2
+	cd /usr/local/lib && ln -s $nginx_install_path/zlib/lib/libz.so.1.4 libz.so.1.4
 	echo $nginx_install_path"/zlib/lib" >> /etc/ld.so.conf
 	ldconfig
 fi
 
 #下载pcre
-pcre='pcre2-10.47'
+pcre='pcre2-10.49'
 if [ ! -d $install_path/$pcre ]; then
 	echo 'installing '$pcre' ...' 
 	if [ ! -f $base_path/$pcre.tar.gz ]; then
@@ -60,7 +60,7 @@ fi
 
 #安装libiconv
 if [ ! -d $nginx_install_path/libiconv ]; then
-	libiconv='libiconv-1.18'
+	libiconv='libiconv-1.19'
 	if [ ! -f $base_path/$libiconv.tar.gz ]; then
 		wget --no-check-certificate --no-cache -O $base_path/$libiconv.tar.gz https://install.ruanzhijun.cn/$libiconv.tar.gz || exit
 	fi
@@ -73,7 +73,7 @@ if [ ! -d $nginx_install_path/libiconv ]; then
 fi
 
 #安装jemalloc
-jemalloc='jemalloc-5.3.1'
+jemalloc='jemalloc-5.4.0'
 if [ ! -d $nginx_install_path/jemalloc ]; then
 	if [ ! -d $install_path/$jemalloc ]; then
 		echo 'installing '$jemalloc' ...'
@@ -91,7 +91,7 @@ if [ ! -d $nginx_install_path/jemalloc ]; then
 fi
 
 # 安装OpenSSL
-openssl='openssl-3.5.7'
+openssl='openssl-3.5.9'
 if [ ! -f $base_path/$openssl.tar.gz ]; then
 	echo $openssl'.tar.gz is not exists, system will going to download it...'
 	wget --no-check-certificate --no-cache -O $base_path/$openssl.tar.gz https://install.ruanzhijun.cn/$openssl.tar.gz || exit
@@ -112,7 +112,7 @@ if [ ! -d $install_path/$libatomic ]; then
 fi
 
 #安装libmaxminddb
-geoip='libmaxminddb-1.13.3'
+geoip='libmaxminddb-1.14.1'
 if [ ! -d $install_path/$geoip ]; then
 	echo 'installing '$geoip' ...'
 	if [ ! -f $base_path/$geoip.tar.gz ]; then
@@ -125,7 +125,7 @@ if [ ! -d $install_path/$geoip ]; then
 fi
 
 #下载openresty，集成lua能力
-openresty='openresty-1.31.1.1'
+openresty='openresty-1.31.8.1'
 if [ ! -d $install_path/$openresty ]; then
 	echo 'installing '$openresty' ...'
 	if [ ! -f $base_path/$openresty.tar.gz ]; then
@@ -137,14 +137,14 @@ if [ ! -d $install_path/$openresty ]; then
 fi
 
 #安装LuaJIT
-luaJit='LuaJIT-2.1-20260415'
+luaJit='LuaJIT-2.1-20261023'
 cd $install_path/$openresty/bundle/$luaJit && make -j $worker_processes && make install || exit
 echo 'export LUAJIT_LIB=/usr/local/lib' >> /etc/profile || exit
 echo 'export LUAJIT_INC=/usr/local/include/luajit-2.1' >> /etc/profile || exit
 . /etc/profile || exit
 
 #安装lua-cjson
-cjson='lua-cjson-2.1.0.17'
+cjson='lua-cjson-2.1.0.20'
 cd $install_path/$openresty/bundle/$cjson && make CFLAGS="-fPIC -I/usr/local/include/luajit-2.1" -j $worker_processes && make install || exit
 if find /usr/local | grep -q "cjson"; then
     :
@@ -155,7 +155,7 @@ else
 fi
 
 #安装lua-resty-core
-lua_resty_core='lua-resty-core-0.1.34rc3'
+lua_resty_core='lua-resty-core-0.1.35rc2'
 cd $install_path/$openresty/bundle/$lua_resty_core && make -j $worker_processes && make install || exit
 lua_package_path='/usr/local/lib/lua/?.lua;/usr/local/lib/lua/?/init.lua;/usr/local/lib/lua/5.1/?.lua;/usr/local/lib/lua/5.1/?/init.lua;;'
 lua_package_cpath='/usr/local/lib/lua/?.so;/usr/local/lib/lua/5.1/?.so;;'

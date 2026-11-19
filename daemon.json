@@ -1,0 +1,1 @@
+{"registry-mirrors":["https://docker.1ms.run"],"storage-driver":"overlay2","log-driver":"json-file","log-opts":{"max-size":"1m","max-file":"1"}}
